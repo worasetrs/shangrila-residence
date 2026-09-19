@@ -1,0 +1,41 @@
+[
+  {
+    "viewport": "desktop",
+    "chapters": 10,
+    "horizontalOverflow": false,
+    "zoom": true,
+    "fullscreen": true,
+    "backToTop": true,
+    "errors": [],
+    "failures": []
+  },
+  {
+    "viewport": "tablet",
+    "chapters": 10,
+    "horizontalOverflow": false,
+    "zoom": true,
+    "fullscreen": true,
+    "backToTop": true,
+    "errors": [],
+    "failures": []
+  },
+  {
+    "viewport": "mobile",
+    "chapters": 10,
+    "horizontalOverflow": false,
+    "zoom": true,
+    "fullscreen": true,
+    "backToTop": true,
+    "errors": [],
+    "failures": []
+  },
+  {
+    "reducedMotion": "image tour, no GLB request"
+  },
+  {
+    "failureRecovery": "Blocked GLB returns to image tour; unavailable PDF retains image preview"
+  },
+  {
+    "build": "production dist"
+  }
+]

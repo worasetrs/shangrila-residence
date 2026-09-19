@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.sites-runtime/
+qa/*.png
+qa/*.log
+public/assets/source-export.glb
+qa/*.glb
+qa/blend-audit.json
+.env*
+!.env.example

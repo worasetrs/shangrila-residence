@@ -1,0 +1,78 @@
+import {createRequire} from 'node:module';
+import {writeFile} from 'node:fs/promises';
+import {readFile} from 'node:fs/promises';
+import {createServer} from 'node:http';
+import {resolve,extname} from 'node:path';
+if(process.argv.includes('--scenes')){await import('./scene-qa.mjs');process.exit(0);}
+const require=createRequire(import.meta.url);
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE || 'C:/Users/worra/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const browser=await chromium.launch({channel:'msedge',headless:true,args:['--enable-unsafe-swiftshader','--use-gl=angle']});
+const results=[];
+let server;
+if(process.argv.includes('--production')){
+ const root=resolve('dist');const types={'.html':'text/html','.js':'application/javascript','.mjs':'application/javascript','.css':'text/css','.pdf':'application/pdf','.glb':'model/gltf-binary','.json':'application/json','.webp':'image/webp','.svg':'image/svg+xml','.woff':'font/woff','.woff2':'font/woff2'};
+ server=createServer(async(req,res)=>{try{const path=resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://localhost').pathname));if(path!==root && !path.startsWith(root+'\\')){res.writeHead(403).end();return;}const file=path===root?resolve(root,'index.html'):path;const data=await readFile(file);res.writeHead(200,{'Content-Type':types[extname(file)]||'application/octet-stream','Content-Length':data.length});res.end(data);}catch{res.writeHead(404).end();}});
+ await new Promise(resolve=>server.listen(4173,'127.0.0.1',resolve));
+}
+const base=server?'http://127.0.0.1:4173/':process.env.QA_URL || 'http://127.0.0.1:5173/';
+try{
+ for(const config of [{name:'desktop',width:1440,height:960},{name:'tablet',width:820,height:1180},{name:'mobile',width:390,height:844}]){
+  const context=await browser.newContext({viewport:{width:config.width,height:config.height},deviceScaleFactor:1,isMobile:config.name==='mobile',hasTouch:config.name!=='desktop'});
+  const page=await context.newPage(),errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  const failures=[];page.on('response',r=>{if(r.status()>=400)failures.push(`${r.status()} ${r.url()}`);});
+  await page.goto(base,{waitUntil:'networkidle'});
+  if(config.name!=='mobile')await page.waitForFunction(()=>getComputedStyle(document.querySelector('.webgl')).opacity==='1' || document.querySelector('.mode-status').textContent.includes('image tour'));
+  await page.screenshot({path:`qa/${config.name}-hero.png`});
+  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);
+  const count=await page.locator('[data-chapter]').count();
+  if(overflow)throw Error(config.name+' horizontal overflow');if(count!==10)throw Error('Missing chapter');
+  await page.getByRole('button',{name:'Open chapters'}).click();
+  await page.locator('#chapter-menu').getByRole('link',{name:'09 The master plan'}).click();
+  await page.waitForFunction(()=>Math.abs(document.getElementById('masterplan').getBoundingClientRect().top)<20);
+  await page.waitForFunction(()=>document.querySelector('.plan-sheet canvas')?.width>0);
+  await page.waitForFunction(()=>document.querySelector('.plan-caption')?.textContent.includes('Zoom in to explore'));
+  await page.screenshot({path:`qa/${config.name}-plan.png`});
+  await page.getByRole('button',{name:'Zoom in',exact:true}).click();
+  await page.getByRole('button',{name:'Zoom in',exact:true}).click();
+  if(await page.locator('.plan-tools output').textContent()!=='150%')throw Error('Zoom failed');
+  await page.getByRole('button',{name:'Fit plan to view'}).click();
+  if(config.name==='desktop'){
+   const before=await page.evaluate(()=>scrollY);
+   await page.locator('.plan-viewport').hover();await page.mouse.wheel(0,180);
+   await page.waitForFunction(before=>scrollY>before+20,before);
+  }
+  await page.getByRole('button',{name:'View fullscreen'}).click();
+  if(await page.getByRole('dialog').count()!==1)throw Error('Fullscreen failed');
+  await page.waitForTimeout(400);
+  await page.waitForFunction(()=>document.querySelector('.plan-caption')?.textContent.includes('Zoom in to explore'));
+  if(await page.getByRole('button',{name:'Exit fullscreen'}).isVisible()!==true)throw Error('Fullscreen controls hidden');
+  await page.screenshot({path:`qa/${config.name}-fullscreen.png`});
+  await page.keyboard.press('Escape');
+  if(await page.getByRole('dialog').count()!==0)throw Error('Escape failed');
+  await page.getByRole('button',{name:'Open chapters'}).click();
+  await page.locator('#chapter-menu').getByRole('link',{name:'10 Until we meet here'}).click();
+  await page.waitForFunction(()=>document.getElementById('closing').getBoundingClientRect().top<20).catch(async()=>{throw Error(config.name+' closing navigation: '+JSON.stringify(await page.evaluate(()=>({top:document.getElementById('closing').getBoundingClientRect().top,y:scrollY,max:document.documentElement.scrollHeight-innerHeight,height:innerHeight,bodyOverflow:document.body.style.overflow}))));});
+  await page.screenshot({path:`qa/${config.name}-closing.png`});
+  await page.getByRole('link',{name:'Back to the beginning'}).click();
+  await page.waitForFunction(()=>scrollY<110);
+  results.push({viewport:config.name,chapters:count,horizontalOverflow:overflow,zoom:true,fullscreen:true,backToTop:true,errors,failures});
+  await context.close();
+ }
+ const context=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'});
+ const page=await context.newPage();const requests=[];page.on('request',r=>requests.push(r.url()));
+ await page.goto(base,{waitUntil:'networkidle'});
+ if(requests.some(u=>u.endsWith('.glb')))throw Error('Reduced motion loads unnecessary GLB');
+ results.push({reducedMotion:'image tour, no GLB request'});await context.close();
+ const failedContext=await browser.newContext({viewport:{width:1440,height:960}});
+ const failed=await failedContext.newPage();await failed.addInitScript(()=>Object.defineProperty(navigator,'deviceMemory',{get:()=>8}));
+ await failed.route('**/*.glb',route=>route.abort());
+ await failed.goto(base,{waitUntil:'networkidle'});
+ await failed.getByRole('button',{name:'Enable 3D experience'}).waitFor();
+ await failed.route('**/SITE_MASTERPLAN.pdf',route=>route.fulfill({status:500,body:'Test unavailable PDF'}));
+ await failed.getByRole('link',{name:'The master plan',exact:true}).click();
+ await failed.waitForFunction(()=>document.querySelector('.plan-sheet img')?.naturalWidth>0);
+ results.push({failureRecovery:'Blocked GLB returns to image tour; unavailable PDF retains image preview'});await failedContext.close();
+ results.push({build:server?'production dist':'development'});
+ await writeFile('qa/browser-results.json',JSON.stringify(results,null,2));console.log(JSON.stringify(results,null,2));
+}finally{await browser.close();if(server)await new Promise(resolve=>server.close(resolve));}

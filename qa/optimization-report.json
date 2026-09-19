@@ -1,0 +1,9 @@
+{
+  "inputBytes": 138677668,
+  "outputBytes": 24788172,
+  "nodes": 46,
+  "meshes": 46,
+  "primitives": 150,
+  "triangles": 2120036,
+  "compression": "EXT_meshopt_compression; quantized attributes; topology borders locked; architectural simplification error 0.02% of batch radius; furniture 0.07%; foliage 0.3%"
+}

@@ -1,0 +1,11 @@
+{
+  "source": "C:\\Shangrila Working\\03_BLENDER\\SHANGRILA_MASTER_REFINED.blend",
+  "source_sha256": "ec86a392532094b31e19cccea5bbec32c9cf76e4f10274bf36f59fa151aa0051",
+  "source_objects": 28170,
+  "exported_source_objects": 17080,
+  "web_batches": 169,
+  "materials": 47,
+  "seconds": 30,
+  "geometry_policy": "No decimation. Evaluated modifiers retained. Hidden archives/reference excluded. Procedural finishes reduced to original PBR base values.",
+  "export_bytes": 138677668
+}
