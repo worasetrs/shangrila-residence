@@ -1,5 +1,36 @@
 [
   {
+    "viewport": "desktop",
+    "autoExplore": true,
+    "originalQuality": true,
+    "pixelRatio": 1,
+    "rotate": true,
+    "zoom": true,
+    "keyboardPan": true,
+    "hotspots": 7,
+    "zeroIdleFrames": true,
+    "pausesForImages": true,
+    "cameraPreserved": true,
+    "galleryImages": 29,
+    "conceptCaptions": 23,
+    "filters": true,
+    "lightbox": true,
+    "masterPlan": {
+      "imageOnly": true,
+      "pinch": false,
+      "focalAnchor": false,
+      "pan": true,
+      "zoomBounds": [
+        0.75,
+        5
+      ],
+      "fullscreen": true,
+      "rotation": false
+    },
+    "errors": [],
+    "failures": []
+  },
+  {
     "viewport": "mobile",
     "autoExplore": true,
     "originalQuality": true,

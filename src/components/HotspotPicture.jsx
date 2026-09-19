@@ -13,7 +13,7 @@ function EnlargedPicture({item,src,opener,onClose}){
   const rect=event.currentTarget.getBoundingClientRect();
   if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)onClose();
  }}>
-  <div className="lightbox-bar"><span>A CLOSER LOOK</span><button autoFocus onClick={onClose} aria-label="Close enlarged image">Close ×</button></div>
+  <div className="lightbox-bar"><span>A CLOSER LOOK</span><button autoFocus onClick={onClose} aria-label="Close enlarged image">Close</button></div>
   <div className="lightbox-picture">{failed?<div className="image-placeholder"><strong>{item.label}</strong><p>Image temporarily unavailable.</p></div>:<img src={src} alt={`${item.label} exterior view`} decoding="async" onError={()=>setFailed(true)}/>}</div>
   <div className="lightbox-caption"><h2>{item.label}</h2></div>
  </dialog>,document.body);
@@ -24,7 +24,7 @@ export default function HotspotPicture({item}){
  const src=item.image.startsWith('/')?item.image:`/assets/${item.image}.webp`;
  return <>
   <button ref={opener} className="hotspot-preview" aria-label={`View larger image of ${item.label}`} aria-haspopup="dialog" disabled={failed} onClick={()=>setOpen(true)}>
-   {failed?<span className="preview-unavailable">Image unavailable</span>:<><img src={src} alt={`${item.label} exterior view`} onError={()=>setFailed(true)}/><span className="preview-expand" aria-hidden="true">⤢</span></>}
+   {failed?<span className="preview-unavailable">Image unavailable</span>:<><img src={src} alt={`${item.label} exterior view`} onError={()=>setFailed(true)}/><span className="preview-expand" aria-hidden="true">View</span></>}
   </button>
   {open&&<EnlargedPicture item={item} src={src} opener={opener} onClose={()=>setOpen(false)}/>}
  </>;

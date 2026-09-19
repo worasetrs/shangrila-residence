@@ -73,16 +73,16 @@ function App(){
   <a className="skip" href="#interiors" onClick={e=>navigate(e,'interiors')}>Skip 3D and view gallery</a>
   <header className="header"><a href="#explore" className="brand" aria-label="Shangri-La Residence, Explore" onClick={e=>navigate(e,'explore')}><Mark/><span>SHANGRI-LA<small>RESIDENCE</small></span></a>
    <nav className="desktop-nav" aria-label="Main navigation">{navigation.map(item=><a key={item.id} href={`#${item.id}`} aria-current={active===item.id?'location':undefined} onClick={e=>navigate(e,item.id)}>{item.label}</a>)}</nav>
-   <div className="header-end"><span className="location">HUA HIN, THAILAND</span><button ref={menuButton} className="menu-button" aria-label={menu?'Close navigation':'Open navigation'} aria-expanded={menu} aria-controls="section-menu" onClick={()=>setMenu(!menu)}><span/><span/></button></div>
+   <div className="header-end"><span className="location">HUA HIN, THAILAND</span><button ref={menuButton} className="menu-button" aria-label={menu?'Close navigation':'Open navigation'} aria-expanded={menu} aria-controls="section-menu" onClick={()=>setMenu(!menu)}>{menu?'Close':'Menu'}</button></div>
   </header>
-  {menu&&<nav id="section-menu" className="section-menu" aria-label="Sections">{navigation.map((item,i)=><a key={item.id} href={`#${item.id}`} aria-current={active===item.id?'location':undefined} onClick={e=>navigate(e,item.id)}><span>0{i+1}</span>{item.label}<span>↗</span></a>)}</nav>}
+  {menu&&<nav id="section-menu" className="section-menu" aria-label="Sections">{navigation.map((item,i)=><a key={item.id} href={`#${item.id}`} aria-current={active===item.id?'location':undefined} onClick={e=>navigate(e,item.id)}><span>0{i+1}</span>{item.label}</a>)}</nav>}
   <main>
    <section id="explore" ref={stage} className="explore-section" tabIndex={-1} aria-label="Explore Shangri-La Residence">
     <div className="poster-stack" aria-hidden="true"><img src="/assets/aerial.webp" alt="" fetchPriority="high"/></div>
     <div ref={host} className={`webgl ${ready?'is-ready':''}`} aria-hidden={!ready}/>
     <Hotspots layer={hotspotLayer} active={ready} selected={selected} onSelect={focusPlace}/>
     <ExploreControls active={ready} phase={phase} selected={selected} touch={device.touch} onReset={reset} onGallery={e=>navigate(e,'interiors')} onPlan={e=>navigate(e,'masterplan')} onBack={reset} onZoom={factor=>engine.current?.zoom(factor)}/>
-    {!ready&&<div className="explore-welcome"><p className="eyebrow">HUA HIN · THAILAND</p><h1>Your own<br/><em>perspective.</em></h1><p>{failed?'Explore the project through our collection of images.':'Explore freely. Discover a place to call home.'}</p><a className="button" href="#interiors" onClick={e=>navigate(e,'interiors')}>View gallery ↓</a>{failed&&<button className="retry-3d" onClick={()=>setAttempt(value=>value+1)}>Retry 3D</button>}</div>}
+    {!ready&&<div className="explore-welcome"><p className="eyebrow">HUA HIN · THAILAND</p><h1>Your own<br/><em>perspective.</em></h1><p>{failed?'Explore the project through our collection of images.':'Explore freely. Discover a place to call home.'}</p><a className="button" href="#interiors" onClick={e=>navigate(e,'interiors')}>View gallery</a>{failed&&<button className="retry-3d" onClick={()=>setAttempt(value=>value+1)}>Retry 3D</button>}</div>}
     {!ready&&!failed&&<LoadingScreen progress={load} message="Loading your interactive view…"/>}
    </section>
    <InteriorGallery/>
@@ -90,10 +90,10 @@ function App(){
     <div className="section-heading"><div><p className="eyebrow">03 / THE MASTER PLAN</p><h2>Every place.<br/><em>One considered whole.</em></h2></div><p>Explore the original site drawing.<br/>Pinch to zoom. Drag to move.</p></div>
     <MasterPlan/>
     <div className="plan-legend"><span><b>A / B</b> Residences</span><span><b>P03</b> Restaurant</span><span><b>P04</b> Pool</span><span><b>P05</b> Pool facilities</span><span><b>P06</b> Staff accommodation</span><span><b>P07</b> Guardhouse</span></div>
-    <a className="plan-download" href="/assets/SITE_MASTERPLAN.pdf" target="_blank" rel="noreferrer">Download original PDF ↗</a>
+    <a className="plan-download" href="/assets/SITE_MASTERPLAN.pdf" target="_blank" rel="noreferrer">Download original PDF</a>
    </section>
   </main>
-  <footer><span>SHANGRI-LA RESIDENCE · HUA HIN</span><a href="#explore" onClick={e=>navigate(e,'explore')}>Back to Explore ↑</a></footer>
+  <footer><span>SHANGRI-LA RESIDENCE · HUA HIN</span><a href="#explore" onClick={e=>navigate(e,'explore')}>Back to Explore</a></footer>
  </>;
 }
 createRoot(document.getElementById('root')).render(<App/>);

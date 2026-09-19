@@ -17,9 +17,9 @@ function Lightbox({items,index,onIndex,onClose}){
  },[]);
  const move=delta=>onIndex((index+delta+items.length)%items.length);
  return <dialog ref={dialog} className="gallery-dialog" aria-label={`${image.title} — full image`} onCancel={e=>{e.preventDefault();onClose();}} onKeyDown={e=>{if(e.key==='ArrowRight'){e.preventDefault();move(1);}if(e.key==='ArrowLeft'){e.preventDefault();move(-1);}}}>
-  <div className="lightbox-bar"><span>{String(index+1).padStart(2,'0')} / {items.length}</span><button autoFocus onClick={onClose} aria-label="Close image">Close ×</button></div>
+  <div className="lightbox-bar"><span>{String(index+1).padStart(2,'0')} / {items.length}</span><button autoFocus onClick={onClose} aria-label="Close image">Close</button></div>
   <div className="lightbox-picture"><Picture image={image} large/></div>
-  <div className="lightbox-caption"><div><h2>{image.title}</h2><p>{provenance(image)}</p></div><div className="lightbox-navigation"><button onClick={()=>move(-1)} aria-label="Previous image">←</button><button onClick={()=>move(1)} aria-label="Next image">→</button><a href={image.src} target="_blank" rel="noreferrer" aria-label="Open original size image">↗</a></div></div>
+  <div className="lightbox-caption"><div><h2>{image.title}</h2><p>{provenance(image)}</p></div><div className="lightbox-navigation"><button onClick={()=>move(-1)} aria-label="Previous image">Previous</button><button onClick={()=>move(1)} aria-label="Next image">Next</button><a href={image.src} target="_blank" rel="noreferrer" aria-label="Open original size image">Original</a></div></div>
  </dialog>;
 }
 export default function InteriorGallery(){
@@ -30,7 +30,7 @@ export default function InteriorGallery(){
   <div className="gallery-filters" aria-label="Filter gallery">{galleryCategories.map(item=><button key={item.id} aria-pressed={category===item.id} onClick={()=>setCategory(item.id)}>{item.label}<span>{item.id==='all'?images.length:images.filter(image=>image.category===item.id).length}</span></button>)}</div>
   <p className="gallery-count" role="status">{selected.length} images</p>
   <div className="gallery-grid">{selected.map((image,i)=><article className="gallery-card" key={image.id} data-image-id={image.id}>
-   <button className="gallery-picture" aria-label={`Open ${image.title}`} onClick={()=>setIndex(i)}><Picture image={image}/><span aria-hidden="true">↗</span></button>
+   <button className="gallery-picture" aria-label={`Open ${image.title}`} onClick={()=>setIndex(i)}><Picture image={image}/><span aria-hidden="true">View image</span></button>
    <div className="gallery-caption"><span>{image.sceneId}</span><h3>{image.title}</h3><p>{provenance(image)}</p></div>
   </article>)}</div>
   {index!==null&&<Lightbox items={selected} index={index} onIndex={setIndex} onClose={()=>setIndex(null)}/>}

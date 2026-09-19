@@ -45,7 +45,7 @@ export async function checkExperience(browser,base,mobile){
  await page.getByRole('button',{name:'Reset View',exact:true}).click();await settled();
  const idle=(await read()).renders;await page.waitForTimeout(650);assert.equal((await read()).renders,idle,'No idle rendering');
  const cameraBeforeGallery=(await read()).camera;
- await page.getByRole('link',{name:'View gallery ↓',exact:true}).click();
+ await page.locator('.gallery-link').click();
  await page.waitForFunction(()=>document.querySelector('.webgl').__sceneDiagnostics.paused);
  const paused=(await read()).renders;await page.waitForTimeout(500);assert.equal((await read()).renders,paused);
  assert.deepEqual((await read()).camera,cameraBeforeGallery,'Page scrolling must not drive the camera');
@@ -114,7 +114,7 @@ export async function checkExperience(browser,base,mobile){
 export async function checkRecovery(browser,base){
  const context=await browser.newContext({viewport:{width:390,height:844},isMobile:true,hasTouch:true,reducedMotion:'reduce'}),page=await context.newPage();page.setDefaultTimeout(60000);
  await page.route('**/*.glb',route=>route.abort());await page.goto(base,{waitUntil:'networkidle'});
- await page.getByRole('button',{name:'Retry 3D',exact:true}).waitFor();await page.getByRole('link',{name:'View gallery ↓',exact:true}).click();
+ await page.getByRole('button',{name:'Retry 3D',exact:true}).waitFor();await page.getByRole('link',{name:'View gallery',exact:true}).click();
  assert.equal(await page.locator('.gallery-card').count(),29);
  await page.unroute('**/*.glb');await navigate(page,'explore');await page.getByRole('button',{name:'Retry 3D',exact:true}).click();
  await page.waitForFunction(()=>document.querySelector('.webgl')?.__sceneDiagnostics?.mode==='explore',null,{timeout:90000});
