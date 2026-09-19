@@ -1,36 +1,36 @@
 {
   "images": [
     {
-      "id": "living",
-      "source": "06_INTERIOR_PRESENTATION_IMAGES\\03_FINAL_OUTPUT\\001_MAIN_LIVING_HERO.png",
+      "id": "001-main-living-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/03_FINAL_OUTPUT/001_MAIN_LIVING_HERO.png",
       "sha256": "2e57ab207fa9838d578adb0dacb96a022600073982b935dcb36df2dbed90d929",
       "sourceSize": [
         3000,
         1998
       ],
       "webSize": [
-        2400,
-        1598
+        3000,
+        1998
       ],
       "provenance": "Native image from original interior design PDF"
     },
     {
-      "id": "dining",
-      "source": "06_INTERIOR_PRESENTATION_IMAGES\\03_FINAL_OUTPUT\\002_MAIN_DINING_HERO.png",
+      "id": "002-main-dining-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/03_FINAL_OUTPUT/002_MAIN_DINING_HERO.png",
       "sha256": "5b4d0d24a490e70d9bc073f1963e2be16e2b7c49095813b434f0f3eeb74a8c22",
       "sourceSize": [
         3000,
         1998
       ],
       "webSize": [
-        2400,
-        1598
+        3000,
+        1998
       ],
       "provenance": "Native image from original interior design PDF"
     },
     {
-      "id": "kitchen",
-      "source": "06_INTERIOR_PRESENTATION_IMAGES\\03_FINAL_OUTPUT\\003_MAIN_KITCHEN_HERO.png",
+      "id": "003-main-kitchen-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/03_FINAL_OUTPUT/003_MAIN_KITCHEN_HERO.png",
       "sha256": "55d5e92ef60ea24e37fa0356800834d2d7faab3a299742af20f6b5632b72b6f2",
       "sourceSize": [
         1264,
@@ -43,8 +43,22 @@
       "provenance": "Native image from original interior design PDF"
     },
     {
-      "id": "bedroom",
-      "source": "06_INTERIOR_PRESENTATION_IMAGES\\02_DRAFT_OUTPUT\\004_MAIN_BEDROOM_MASTER_HERO.png",
+      "id": "003-main-kitchen-view02",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/03_FINAL_OUTPUT/003_MAIN_KITCHEN_VIEW02.png",
+      "sha256": "e82e21c776b1d5eeded27943c1f3609fc6af84d84c5b6783255b851359fffe73",
+      "sourceSize": [
+        1264,
+        841
+      ],
+      "webSize": [
+        1264,
+        841
+      ],
+      "provenance": "Native image from original interior design PDF"
+    },
+    {
+      "id": "004-main-bedroom-master-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/004_MAIN_BEDROOM_MASTER_HERO.png",
       "sha256": "adfdc61da0cbb6081c4cc66bbf6ee715db5019d20cd318f380227bc1527ed538",
       "sourceSize": [
         1536,
@@ -57,8 +71,8 @@
       "provenance": "Provisional AI concept, not a current-model render"
     },
     {
-      "id": "bathroom",
-      "source": "06_INTERIOR_PRESENTATION_IMAGES\\02_DRAFT_OUTPUT\\005_MAIN_BATHROOM_MASTER_HERO.png",
+      "id": "005-main-bathroom-master-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/005_MAIN_BATHROOM_MASTER_HERO.png",
       "sha256": "56dc377bc743ca9ae22843de38e690b564d62318b7dd31e0fc2bcd1c3f5bd267",
       "sourceSize": [
         1536,
@@ -71,8 +85,120 @@
       "provenance": "Provisional AI concept, not a current-model render"
     },
     {
-      "id": "restaurant",
-      "source": "06_INTERIOR_PRESENTATION_IMAGES\\02_DRAFT_OUTPUT\\014_RESTAURANT_DINING_HERO.png",
+      "id": "006-main-bedroom-typical-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/006_MAIN_BEDROOM_TYPICAL_HERO.png",
+      "sha256": "f27b7e9fcd7a4c58a2a0cfd1548933f8c7a8552e4dea471cba4565b15944dc4a",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "webSize": [
+        1536,
+        1024
+      ],
+      "provenance": "Provisional AI concept, not a current-model render"
+    },
+    {
+      "id": "007-main-bathroom-typical-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/007_MAIN_BATHROOM_TYPICAL_HERO.png",
+      "sha256": "daf06db772060eba4e354208d60538c2498adbbdf202eb26e77da3c91dbe27dd",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "webSize": [
+        1536,
+        1024
+      ],
+      "provenance": "Provisional AI concept, not a current-model render"
+    },
+    {
+      "id": "008-main-dressing-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/008_MAIN_DRESSING_HERO.png",
+      "sha256": "ea9e6b7e04dc8052105fd611a0c6a66548db12841151834c38104aa5b57b215e",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "webSize": [
+        1536,
+        1024
+      ],
+      "provenance": "Provisional AI concept, not a current-model render"
+    },
+    {
+      "id": "009-main-office-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/009_MAIN_OFFICE_HERO.png",
+      "sha256": "2ea706e9555f7bc14b46407e529bfc55431a9e6bd8f23d496b450ba140e97b4b",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "webSize": [
+        1536,
+        1024
+      ],
+      "provenance": "Provisional AI concept, not a current-model render"
+    },
+    {
+      "id": "010-main-library-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/010_MAIN_LIBRARY_HERO.png",
+      "sha256": "cb13d1828fc78513e8f23191662a8fb2b9d967b5f2190043385b42ccb3e3fc5b",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "webSize": [
+        1536,
+        1024
+      ],
+      "provenance": "Provisional AI concept, not a current-model render"
+    },
+    {
+      "id": "011-main-fitness-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/011_MAIN_FITNESS_HERO.png",
+      "sha256": "3dce526e3ada717376b493080f2dc786598169c751414cf821b0a498e056608c",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "webSize": [
+        1536,
+        1024
+      ],
+      "provenance": "Provisional AI concept, not a current-model render"
+    },
+    {
+      "id": "012-main-familylounge-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/03_FINAL_OUTPUT/012_MAIN_FAMILYLOUNGE_HERO.png",
+      "sha256": "cc3caaccb1864472066269aa48ac9f9931779a7105a8541b3cc4e46a182af02c",
+      "sourceSize": [
+        1264,
+        841
+      ],
+      "webSize": [
+        1264,
+        841
+      ],
+      "provenance": "Native image from original interior design PDF"
+    },
+    {
+      "id": "013-main-entrancehall-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/013_MAIN_ENTRANCEHALL_HERO.png",
+      "sha256": "31dc2fda2cde3dbd7d62e651cbff1de46412f1d7b53225c541f209db80282a1f",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "webSize": [
+        1536,
+        1024
+      ],
+      "provenance": "Provisional AI concept, not a current-model render"
+    },
+    {
+      "id": "014-restaurant-dining-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/014_RESTAURANT_DINING_HERO.png",
       "sha256": "65ba597d01c8742ce81ea06fc0e124c63dd50bf9736c3aaa8fb9ff7b4fe0cad9",
       "sourceSize": [
         1536,
@@ -85,8 +211,64 @@
       "provenance": "Provisional AI concept, not a current-model render"
     },
     {
-      "id": "spa",
-      "source": "06_INTERIOR_PRESENTATION_IMAGES\\02_DRAFT_OUTPUT\\019_P05_SPA_HERO.png",
+      "id": "015-restaurant-bar-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/015_RESTAURANT_BAR_HERO.png",
+      "sha256": "84626fc71bc3e1ef1bf87ef5dd7346da48cffabe27b0e9aa2f4b93305bc102e0",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "webSize": [
+        1536,
+        1024
+      ],
+      "provenance": "Provisional AI concept, not a current-model render"
+    },
+    {
+      "id": "016-restaurant-terrace-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/016_RESTAURANT_TERRACE_HERO.png",
+      "sha256": "13a8831256b9ee6a595f2c00e9ac6d47da816696eef7f79d56ec0ac4d288d7a2",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "webSize": [
+        1536,
+        1024
+      ],
+      "provenance": "Provisional AI concept, not a current-model render"
+    },
+    {
+      "id": "017-p05-changing-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/017_P05_CHANGING_HERO.png",
+      "sha256": "e3bac19daa8806fc255406cb23457113b305414ab7c7c6cab398dbb4936c13e7",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "webSize": [
+        1536,
+        1024
+      ],
+      "provenance": "Provisional AI concept, not a current-model render"
+    },
+    {
+      "id": "018-p05-shower-wc-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/018_P05_SHOWER_WC_HERO.png",
+      "sha256": "4e2c6939828451206edccd47d6919350764a4caa63011799a206560b4d8f7af8",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "webSize": [
+        1536,
+        1024
+      ],
+      "provenance": "Provisional AI concept, not a current-model render"
+    },
+    {
+      "id": "019-p05-spa-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/019_P05_SPA_HERO.png",
       "sha256": "f14abd1b2acc97b0e9820bc7249d087e4b65e2d80c405bf039bd6c6a91fbce6d",
       "sourceSize": [
         1536,
@@ -99,8 +281,8 @@
       "provenance": "Provisional AI concept, not a current-model render"
     },
     {
-      "id": "sauna",
-      "source": "06_INTERIOR_PRESENTATION_IMAGES\\02_DRAFT_OUTPUT\\020_P05_SAUNA_HERO.png",
+      "id": "020-p05-sauna-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/020_P05_SAUNA_HERO.png",
       "sha256": "fb66ad1c565c16b2494b1a6d6f45d5a62599c31fd14011d95f8b64f8f5eaea36",
       "sourceSize": [
         1536,
@@ -113,8 +295,8 @@
       "provenance": "Provisional AI concept, not a current-model render"
     },
     {
-      "id": "staff",
-      "source": "06_INTERIOR_PRESENTATION_IMAGES\\02_DRAFT_OUTPUT\\021_P06_STAFFROOM_TYPICAL_HERO.png",
+      "id": "021-p06-staffroom-typical-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/021_P06_STAFFROOM_TYPICAL_HERO.png",
       "sha256": "c08212a0117bcaef106e845e33d7434f235cd7a85949face00c6d8ff741f8274",
       "sourceSize": [
         1536,
@@ -125,15 +307,108 @@
         1024
       ],
       "provenance": "Provisional AI concept, not a current-model render"
+    },
+    {
+      "id": "022-p06-staff-lounge-dining-pantry-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/022_P06_STAFF_LOUNGE_DINING_PANTRY_HERO.png",
+      "sha256": "53c27bed1e6d56bbcfff4ad5fb4beca49a4d689be29b61f04069a2a39836de5a",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "webSize": [
+        1536,
+        1024
+      ],
+      "provenance": "Provisional AI concept, not a current-model render"
+    },
+    {
+      "id": "023-p06-staff-wc-shower-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/023_P06_STAFF_WC_SHOWER_HERO.png",
+      "sha256": "999ce4cace758e9e3deb7d7faf5c5c697ec1419783024da48a9cf2cde1f637f1",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "webSize": [
+        1536,
+        1024
+      ],
+      "provenance": "Provisional AI concept, not a current-model render"
+    },
+    {
+      "id": "024-p07-guardhouse-interior-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/024_P07_GUARDHOUSE_INTERIOR_HERO.png",
+      "sha256": "f6c1369eb363813f2a54a163f24696ce206d35421365f4055e591c6bce9397fb",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "webSize": [
+        1536,
+        1024
+      ],
+      "provenance": "Provisional AI concept, not a current-model render"
+    },
+    {
+      "id": "025-support-laundry-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/025_SUPPORT_LAUNDRY_HERO.png",
+      "sha256": "9a414128c3c1747ff04993c777555d707373916eac9af767b9d716a4ee3616f8",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "webSize": [
+        1536,
+        1024
+      ],
+      "provenance": "Provisional AI concept, not a current-model render"
+    },
+    {
+      "id": "026-support-maidroom-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/026_SUPPORT_MAIDROOM_HERO.png",
+      "sha256": "de06bae5e975a75665736a285e9dde688840d09c897c6f42e656e99fc30754b7",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "webSize": [
+        1536,
+        1024
+      ],
+      "provenance": "Provisional AI concept, not a current-model render"
+    },
+    {
+      "id": "027-support-pantry-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/02_DRAFT_OUTPUT/027_SUPPORT_PANTRY_HERO.png",
+      "sha256": "e4ee581850b90f7837763c5fccb44104ba0a0cf0b3a9afd2dd593d908bfa4635",
+      "sourceSize": [
+        1536,
+        1024
+      ],
+      "webSize": [
+        1536,
+        1024
+      ],
+      "provenance": "Provisional AI concept, not a current-model render"
+    },
+    {
+      "id": "028-support-stair-feature-hero",
+      "source": "06_INTERIOR_PRESENTATION_IMAGES/03_FINAL_OUTPUT/028_SUPPORT_STAIR_FEATURE_HERO.png",
+      "sha256": "13730f722bc72754ccefbc6cff999a90b3901de7f1779ee008aa8cd61cb6a64c",
+      "sourceSize": [
+        3000,
+        1998
+      ],
+      "webSize": [
+        3000,
+        1998
+      ],
+      "provenance": "Native image from original interior design PDF"
     }
   ],
   "missing": [],
-  "missingFinals": [
-    "Master Bedroom",
-    "Master Bathroom",
-    "Restaurant Interior",
-    "P05 Spa / Sauna",
-    "P06 Staff Accommodation"
-  ],
-  "policy": "Use existing concepts with visible Concept study captions. Never claim final source or current-model fidelity."
+  "sourceExports": 6,
+  "conceptImages": 23,
+  "policy": "All 29 selected presentation images; final exports take precedence over duplicate drafts. Concepts retain visible provenance captions. Reference sheets, thumbnails and superseded revisions are excluded."
 }

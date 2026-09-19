@@ -20,13 +20,16 @@ const sourceModel=await readFile('../03_BLENDER/SHANGRILA_MASTER_REFINED.blend')
 const report=JSON.parse(await readFile('qa/export-report.json','utf8'));
 assert.equal(hash(sourceModel),report.source_sha256,'Source Blender file changed since export');
 const interiors=JSON.parse(await readFile('src/data/interior-assets.json','utf8'));
-assert.equal(Object.keys(interiors).length,9);
-for(const [id,item] of Object.entries(interiors)){
- if(!item)continue;
- for(const path of [item.src,item.small])assert((await stat('public'+path)).size>1000,`Missing ${id}`);
+assert.equal(interiors.length,29);
+assert.equal(new Set(interiors.map(item=>item.sceneId)).size,28);
+assert.equal(interiors.filter(item=>item.concept).length,23);
+const plan=JSON.parse(await readFile('../06_INTERIOR_PRESENTATION_IMAGES/01_SCENE_LIST/SCENE_PLAN.json','utf8'));
+assert.equal(plan.reduce((total,scene)=>total+scene.images.length,0),interiors.length);
+for(const item of interiors){
+ for(const path of [item.src,item.small])assert((await stat('public'+path)).size>1000,`Missing ${item.id}`);
 }
 const assetsReport=JSON.parse(await readFile('qa/interior-assets.json','utf8'));
 for(const item of assetsReport.images)assert.equal(hash(await readFile('../'+item.source)),item.sha256,`Source image changed: ${item.id}`);
 const hotspotAssets=JSON.parse(await readFile('qa/hotspot-assets.json','utf8'));
 for(const item of Object.values(hotspotAssets)){assert.equal(hash(await readFile('../'+item.source)),item.sha256);assert((await stat('public'+item.output)).size>1000);}
-console.log(`Assets verified: ${(model.length/1048576).toFixed(1)} MiB original-quality GLB on all devices, ${gltf.nodes.length} nodes, ${cameras.length} cameras, ${Object.keys(interiors).length} interior images. Source Blender, PDF and images preserved.`);
+console.log(`Assets verified: ${(model.length/1048576).toFixed(1)} MiB original-quality GLB on all devices, ${gltf.nodes.length} nodes, ${cameras.length} cameras, ${interiors.length} gallery images. Source Blender, PDF and images preserved.`);

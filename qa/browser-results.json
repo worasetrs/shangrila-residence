@@ -1,76 +1,39 @@
 [
   {
-    "viewport": "desktop",
-    "chapters": 8,
-    "interiorGroups": 8,
-    "horizontalOverflow": false,
-    "masterPlan": "Direct 2384×1684 image; no PDF or worker requests",
-    "zoom": true,
-    "fullscreen": true,
-    "backToTop": true,
-    "explore": {
-      "originalQuality": true,
-      "pixelRatio": 1,
-      "rotate": true,
-      "zoom": true,
-      "pan": true,
-      "hotspots": 7,
-      "cameraOutsideBuildings": true,
-      "zeroIdleFrames": true,
-      "continueTour": true,
-      "maxReturnFrameDistance": 8.686758074952607,
-      "pausesForInteriors": true
-    },
-    "errors": [],
-    "failures": []
-  },
-  {
-    "viewport": "tablet",
-    "chapters": 8,
-    "interiorGroups": 8,
-    "horizontalOverflow": false,
-    "masterPlan": "Direct 2384×1684 image; no PDF or worker requests",
-    "zoom": true,
-    "fullscreen": true,
-    "backToTop": true,
-    "errors": [],
-    "failures": []
-  },
-  {
     "viewport": "mobile",
-    "chapters": 8,
-    "interiorGroups": 8,
-    "horizontalOverflow": false,
-    "masterPlan": "Direct 2384×1684 image; no PDF or worker requests",
+    "autoExplore": true,
+    "originalQuality": true,
+    "pixelRatio": 1.5,
+    "rotate": true,
     "zoom": true,
-    "fullscreen": true,
-    "backToTop": true,
-    "explore": {
-      "originalQuality": true,
-      "pixelRatio": 1.5,
-      "rotate": true,
-      "zoom": true,
+    "keyboardPan": true,
+    "hotspots": 7,
+    "zeroIdleFrames": true,
+    "pausesForImages": true,
+    "cameraPreserved": true,
+    "galleryImages": 29,
+    "conceptCaptions": 23,
+    "filters": true,
+    "lightbox": true,
+    "masterPlan": {
+      "imageOnly": true,
+      "pinch": true,
+      "focalAnchor": true,
       "pan": true,
-      "hotspots": 7,
-      "cameraOutsideBuildings": true,
-      "zeroIdleFrames": true,
-      "continueTour": true,
-      "maxReturnFrameDistance": 30.18530428249437,
-      "pausesForInteriors": true,
-      "pausesOverPlan": true,
-      "releasesRenderer": true
+      "zoomBounds": [
+        0.75,
+        5
+      ],
+      "fullscreen": true,
+      "rotation": true
     },
     "errors": [],
     "failures": []
   },
   {
-    "reducedMotion": "image tour, no GLB request"
-  },
-  {
-    "failureRecovery": "Blocked GLB returns to image tour; master plan image works with PDF unavailable"
-  },
-  {
-    "missingImages": "Clean interior placeholder and master-plan PDF link; no broken images"
+    "failedModel": "Gallery remains available; Retry restores Explore",
+    "reducedMotion": "Explore opens without an automatic camera animation",
+    "failedMasterPlan": "Original PDF link remains available"
   },
   {
     "build": "production dist"

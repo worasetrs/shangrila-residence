@@ -2,10 +2,9 @@ import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {createLuxuryLighting,refinePresentationMaterials} from './lighting';
-import {makeCameraPath,samplePath} from './story';
 import {createExplorer} from './explorer';
 
-export async function createScene(host,{signal,onProgress,onReady,onFailure,onController,onExploreState,getProgress,getHero,reducedMotion,mobile=false,hotspotLayer}){
+export async function createScene(host,{signal,onProgress,onReady,onFailure,onController,onExploreState,reducedMotion,mobile=false,hotspotLayer}){
  if(signal.aborted)return ()=>{};
  let renderer;
  try{renderer=new THREE.WebGLRenderer({alpha:false,antialias:true,powerPreference:'high-performance'});}
@@ -19,10 +18,10 @@ export async function createScene(host,{signal,onProgress,onReady,onFailure,onCo
  const camera=new THREE.PerspectiveCamera(40,1,.25,1200);
  const lighting=createLuxuryLighting(renderer,scene);
  const modelURL='/assets/SHANGRILA_MASTER_REFINED.glb';
- const diagnostics={profile:mobile?'mobile':'desktop',quality:'original',modelURL,renders:0,pixelRatio:renderer.getPixelRatio(),antialias:true,shadows:2048,paused:false,mode:'guided'};host.__sceneDiagnostics=diagnostics;
- let dead=false,frame=0,last=0,visible=!document.hidden,paused=host.dataset.paused==='true',model,path,explorer,announced=false,progress=getProgress(),heroTime=0;
+ const diagnostics={profile:mobile?'mobile':'desktop',quality:'original',modelURL,renders:0,pixelRatio:renderer.getPixelRatio(),antialias:true,shadows:2048,paused:false,mode:'loading'};host.__sceneDiagnostics=diagnostics;
+ let dead=false,frame=0,last=0,visible=!document.hidden,paused=host.dataset.paused==='true',model,explorer,announced=false;
  const target=new THREE.Vector3(),projected=new THREE.Vector3();
- function invalidate(){if(!dead && path && visible && !paused && !frame)frame=requestAnimationFrame(render);}
+ function invalidate(){if(!dead && explorer && visible && !paused && !frame)frame=requestAnimationFrame(render);}
  function stop(){cancelAnimationFrame(frame);frame=0;last=0;}
  function setPaused(value){paused=value;diagnostics.paused=value;if(value)stop();else invalidate();}
  function resize(){const {width,height}=host.getBoundingClientRect();if(!width||!height)return;renderer.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix();invalidate();}
@@ -43,18 +42,10 @@ export async function createScene(host,{signal,onProgress,onReady,onFailure,onCo
  function render(time){
   frame=0;if(dead||paused||!visible)return;
   const elapsed=last?(time-last)/1000:0;if(elapsed && elapsed<1/60-.001){invalidate();return;}last=time;
-  const dt=elapsed?Math.min(elapsed,.06):1/60;let moving=false,horizontal;
-  if(explorer?.active){moving=explorer.tick(dt);target.copy(explorer.target);horizontal=explorer.fov;}
-  else{
-   const desired=getProgress();progress=reducedMotion?desired:THREE.MathUtils.damp(progress,desired,5,dt);if(Math.abs(progress-desired)<.0005)progress=desired;
-   const shot=samplePath(path,progress);camera.position.fromArray(shot.position);target.fromArray(shot.target);horizontal=shot.fov;moving=progress!==desired;
-   // One subtle opening drift, then stop entirely when the visitor rests.
-   if(!reducedMotion && getHero() && heroTime<4){heroTime+=dt;camera.position.x+=Math.sin(Math.min(1,heroTime/4)*Math.PI)*1.2;moving=true;}
-   camera.lookAt(target);
-  }
+  const dt=elapsed?Math.min(elapsed,.06):1/60,moving=explorer.tick(dt),horizontal=explorer.fov;target.copy(explorer.target);
   const fov=THREE.MathUtils.radToDeg(2*Math.atan(Math.tan(THREE.MathUtils.degToRad(horizontal)/2)/Math.min(camera.aspect,1.6)));
   if(Math.abs(camera.fov-fov)>.001){camera.fov=fov;camera.updateProjectionMatrix();}
-  renderer.render(scene,camera);updateHotspots();diagnostics.renders++;diagnostics.triangles=renderer.info.render.triangles;diagnostics.drawCalls=renderer.info.render.calls;diagnostics.camera=camera.position.toArray();diagnostics.target=target.toArray();diagnostics.mode=explorer?.mode||'guided';
+  renderer.render(scene,camera);updateHotspots();diagnostics.renders++;diagnostics.triangles=renderer.info.render.triangles;diagnostics.drawCalls=renderer.info.render.calls;diagnostics.camera=camera.position.toArray();diagnostics.target=target.toArray();diagnostics.mode=explorer.mode;
   if(!announced){announced=true;onReady();}
   if(moving)invalidate();else last=0;
  }
@@ -66,13 +57,13 @@ export async function createScene(host,{signal,onProgress,onReady,onFailure,onCo
   ]);
   if(dead)return cleanup;
   model=(await loader.parseAsync(buffer,'/assets/')).scene;if(dead){disposeModel();return cleanup;}
-  path=makeCameraPath(cameras);
   refinePresentationMaterials(model,scene.environment);
   scene.add(model);renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
-  explorer=createExplorer(camera,element,{model,cameras,invalidate,reducedMotion,onState:state=>{diagnostics.mode=state;element.tabIndex=state==='guided'?-1:0;onExploreState(state);}});
+  explorer=createExplorer(camera,element,{model,cameras,invalidate,reducedMotion,onState:state=>{diagnostics.mode=state;element.tabIndex=0;onExploreState(state);}});
   diagnostics.collisionBoxes=explorer.collisionBoxes.map(b=>({min:b.min.toArray(),max:b.max.toArray()}));
-  onController({invalidate,setPaused,enterExplore:()=>{setPaused(false);explorer.enter(samplePath(path,progress));},continueTour:()=>{progress=getProgress();explorer.resume(samplePath(path,progress));},resetView:()=>explorer.reset(),focusHotspot:id=>explorer.focus(id)});
-  progress=getProgress();onProgress(1);invalidate();
+  explorer.start();
+  onController({invalidate,setPaused,resetView:()=>explorer.reset(),focusHotspot:id=>explorer.focus(id),zoom:factor=>explorer.zoom(factor)});
+  onProgress(1);invalidate();
  }catch(error){if(!dead && error.name!=='AbortError'){onFailure('Continue with the image tour. You can try 3D again.');cleanup();}}
  return cleanup;
 }

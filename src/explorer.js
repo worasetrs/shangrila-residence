@@ -17,7 +17,7 @@ export function createExplorer(camera,element,{model,cameras,invalidate,onState,
   anchors[item.id]=anchor;
   if(item.id!=='pool' && !box.isEmpty())collisionBoxes.push(box.expandByScalar(1.5));
  }
- let mode='guided',transition=null,connected=false,horizontalFov=exploreView.fov;
+ let mode='loading',transition=null,connected=false,horizontalFov=exploreView.fov;
  const priorPosition=new Vector3(),priorTarget=new Vector3(),delta=new Vector3(),hit=new Vector3(),ray=new Ray();
  const report=value=>{mode=value;onState(value);};
  function disconnect(){if(connected){controls.disconnect();connected=false;}controls.enabled=false;}
@@ -42,21 +42,28 @@ export function createExplorer(camera,element,{model,cameras,invalidate,onState,
  }
  function animate(view,nextMode,finish){
   disconnect();
-  const destination=nextMode==='returning'?{position:new Vector3(...view.position),target:new Vector3(...view.target),fov:view.fov}:safeView(view);
+  const destination=safeView(view);
   transition={from:camera.position.clone(),fromTarget:controls.target.clone(),fromFov:horizontalFov,...destination,elapsed:0,duration:reducedMotion?0:1.25,finish};
   // Travel above source-derived building boxes before descending to a focus view.
   transition.clearance=Math.max(transition.from.y,destination.position.y,...collisionBoxes.map(b=>b.max.y+10));
   report(nextMode);invalidate();
  }
- function enter(view){
-  if(mode!=='guided')return;
-  controls.target.fromArray(view.target);horizontalFov=view.fov;
-  animate(exploreView,'entering',()=>{connect();report('explore');element.focus({preventScroll:true});});
+ function start(){
+  const view=safeView(exploreView);
+  camera.position.copy(view.position);controls.target.copy(view.target);camera.lookAt(controls.target);
+  horizontalFov=view.fov;connect();report('explore');invalidate();
  }
- function resume(view){if(mode==='guided')return;animate(view,'returning',()=>report('guided'));}
- function reset(){if(mode==='guided')return;animate(exploreView,'resetting',()=>{connect();report('explore');});}
+ function reset(){if(mode==='loading')return;animate(exploreView,'resetting',()=>{connect();report('explore');});}
+ function zoom(factor){
+  if(mode!=='explore')return;
+  const position=camera.position.clone().sub(controls.target).multiplyScalar(factor).add(controls.target);
+  const view=safeView({position:position.toArray(),target:controls.target.toArray(),fov:horizontalFov});
+  delta.copy(view.position).sub(camera.position);const distance=delta.length();ray.set(camera.position,delta.normalize());
+  if(collisionBoxes.some(box=>box.containsPoint(view.position)||(distance>.0001&&ray.intersectBox(box,hit)&&hit.distanceTo(camera.position)<=distance)))return;
+  camera.position.copy(view.position);controls.update();invalidate();
+ }
  function focus(id){
-  const item=hotspots.find(h=>h.id===id);if(!item || mode==='guided')return;
+  const item=hotspots.find(h=>h.id===id);if(!item || mode==='loading')return;
   animate(sourceView(cameras,item.camera,item.distance),'focusing',()=>{connect();report('explore');});
  }
  function tick(dt){
@@ -71,7 +78,7 @@ export function createExplorer(camera,element,{model,cameras,invalidate,onState,
    if(u===1){transition=null;t.finish();}
    return true;
   }
-  if(mode==='guided')return false;
+  if(mode==='loading')return false;
   priorPosition.copy(camera.position);priorTarget.copy(controls.target);
   const changed=controls.update(dt);
   delta.copy(controls.target);controls.target.clamp(minTarget,maxTarget);delta.sub(controls.target);camera.position.sub(delta);
@@ -83,5 +90,5 @@ export function createExplorer(camera,element,{model,cameras,invalidate,onState,
   camera.lookAt(controls.target);
   return changed;
  }
- return {enter,resume,reset,focus,tick,anchors,collisionBoxes,get active(){return mode!=='guided';},get mode(){return mode;},get fov(){return horizontalFov;},get target(){return controls.target;},dispose(){disconnect();controls.dispose();}};
+ return {start,reset,zoom,focus,tick,anchors,collisionBoxes,get active(){return mode!=='loading';},get mode(){return mode;},get fov(){return horizontalFov;},get target(){return controls.target;},dispose(){disconnect();controls.dispose();}};
 }
