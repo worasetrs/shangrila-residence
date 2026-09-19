@@ -1,0 +1,27 @@
+[
+  {
+    "viewport": "desktop",
+    "clickableHotspotImages": 7,
+    "enlargedSourceImage": true,
+    "closeButton": true,
+    "escape": true,
+    "backdrop": true,
+    "focusRestored": true,
+    "cameraPreserved": true,
+    "errors": []
+  },
+  {
+    "viewport": "mobile",
+    "clickableHotspotImages": 7,
+    "enlargedSourceImage": true,
+    "closeButton": true,
+    "escape": true,
+    "backdrop": true,
+    "focusRestored": true,
+    "cameraPreserved": true,
+    "errors": []
+  },
+  {
+    "build": "production dist"
+  }
+]

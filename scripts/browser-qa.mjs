@@ -14,12 +14,18 @@ if(process.argv.includes('--production')){
 }
 const base=server?'http://127.0.0.1:4173/':process.env.QA_URL||'http://127.0.0.1:5173/';
 try{
+ if(process.argv.includes('--hotspot-images')){
+  const {checkHotspotImages}=await import('./hotspot-image-qa.mjs');
+  for(const mobile of [false,true])results.push(await checkHotspotImages(browser,base,mobile));
+ }else{
  for(const mobile of process.argv.includes('--mobile')?[true]:[false,true]){
   console.log(`Checking ${mobile?'mobile':'desktop'} Explore, gallery and master plan…`);
   results.push(await checkExperience(browser,base,mobile));
  }
- results.push(await checkRecovery(browser,base));results.push({build:server?'production dist':'development'});
- await writeFile('qa/browser-results.json',JSON.stringify(results,null,2));console.log(JSON.stringify(results,null,2));
+ results.push(await checkRecovery(browser,base));
+ }
+ results.push({build:server?'production dist':'development'});
+ await writeFile(process.argv.includes('--hotspot-images')?'qa/hotspot-image-results.json':'qa/browser-results.json',JSON.stringify(results,null,2));console.log(JSON.stringify(results,null,2));
 }catch(error){
  const page=browser.contexts().flatMap(context=>context.pages()).at(-1);
  if(page){await page.screenshot({path:'qa/browser-failure.png',scale:'css'});console.error(await page.evaluate(()=>({url:location.href,scrollY,bodyStyle:document.body.getAttribute('style'),diagnostics:document.querySelector('.webgl')?.__sceneDiagnostics,plan:{zoom:document.querySelector('.plan-viewport')?.dataset.zoom,panX:document.querySelector('.plan-viewport')?.dataset.panX,panY:document.querySelector('.plan-viewport')?.dataset.panY}})));}

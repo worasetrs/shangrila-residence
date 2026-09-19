@@ -21,6 +21,8 @@ Netlify repository deployment uses `npm run build` and the `dist` publish direct
 
 Drag to rotate, wheel or pinch to zoom, right-drag or two fingers to pan. Arrow keys pan when the canvas is focused. Plus/minus camera buttons and Reset View are provided. Reset and hotspot focus use smooth transitions above conservative building bounds; reduced-motion users get immediate transitions. Source-derived bounds keep the camera outside buildings, with distance, height, polar-angle and target limits. Moving between page sections preserves the user's camera.
 
+Click or tap the photo in any hotspot's **A CLOSER LOOK** card to open its source image at a larger size. Close, Escape or a backdrop click returns to the same card and camera, with keyboard focus restored to the thumbnail.
+
 **Original mobile quality:** all devices use the 24.8 MB `SHANGRILA_MASTER_REFINED.glb`, with antialiasing, a pixel-ratio cap of 1.5 and a cached 2048px shadow map. No stripped mobile model or adaptive resolution downgrade is selected. Rendering stops at rest, pauses when Explore leaves the visible area and pauses in hidden tabs. There is no body scroll lock for Explore. Pointer gestures belong to the canvas; visitors can use the visible Gallery/Master plan links or scroll outside it to continue.
 
 **Warm lighting:** side sunlight, a restrained cool fill and a softer ambient balance bring out the ivory facades and bronze finishes. An outdoor sky is baked once into the reflection map. Existing architectural light strips glow warmly, planting uses deeper greens, and turquoise pool water has static ripple normals. This uses no post-processing or continuous water animation. The lighting and material grading do not change the source architecture.
@@ -66,6 +68,7 @@ The export script's older optional mobile conversion and associated historical r
 npm run check:assets
 npm run build
 node scripts/browser-qa.mjs --production
+node scripts/browser-qa.mjs --production --hotspot-images
 python scripts/package_delivery.py
 ```
 
