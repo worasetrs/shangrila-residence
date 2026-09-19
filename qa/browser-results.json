@@ -3,6 +3,7 @@
     "viewport": "desktop",
     "chapters": 10,
     "horizontalOverflow": false,
+    "masterPlan": "Direct 2384×1684 image; no PDF or worker requests",
     "zoom": true,
     "fullscreen": true,
     "backToTop": true,
@@ -13,6 +14,7 @@
     "viewport": "tablet",
     "chapters": 10,
     "horizontalOverflow": false,
+    "masterPlan": "Direct 2384×1684 image; no PDF or worker requests",
     "zoom": true,
     "fullscreen": true,
     "backToTop": true,
@@ -23,9 +25,22 @@
     "viewport": "mobile",
     "chapters": 10,
     "horizontalOverflow": false,
+    "masterPlan": "Direct 2384×1684 image; no PDF or worker requests",
     "zoom": true,
     "fullscreen": true,
     "backToTop": true,
+    "mobile3d": {
+      "profile": "mobile",
+      "modelURL": "/assets/SHANGRILA_MOBILE.glb",
+      "pixelRatio": 1,
+      "heroTriangles": 1335194,
+      "idleFrames": 0,
+      "nativeTouchScroll": true,
+      "rotationKeepsMobileModel": true,
+      "environment": "Headless Edge, touch viewport with DPR 3 and 4× CPU throttling. No physical phone GPU claim.",
+      "pausesOverPlan": true,
+      "releasesRenderer": true
+    },
     "errors": [],
     "failures": []
   },
@@ -33,7 +48,7 @@
     "reducedMotion": "image tour, no GLB request"
   },
   {
-    "failureRecovery": "Blocked GLB returns to image tour; unavailable PDF retains image preview"
+    "failureRecovery": "Blocked GLB returns to image tour; master plan image works with PDF unavailable"
   },
   {
     "build": "production dist"

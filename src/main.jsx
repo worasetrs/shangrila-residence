@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, lazy, Suspense } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -9,37 +9,38 @@ import '@fontsource/manrope/latin-600.css';
 import '@fontsource/cormorant-garamond/latin-400.css';
 import '@fontsource/cormorant-garamond/latin-400-italic.css';
 import { chapters, navigation } from './story';
+import { getDeviceProfile } from './device';
+import MasterPlan from './MasterPlan';
 import './style.css';
-const MasterPlan=lazy(()=>import('./MasterPlan'));
 gsap.registerPlugin(ScrollTrigger);
 
 function Mark(){return <svg viewBox="0 0 44 44" fill="none" aria-hidden="true"><path d="M6 33V19L22 5l16 14v14M14 33V22l8-8 8 8v11M2 38h40" stroke="currentColor" strokeWidth="1.2"/></svg>}
 function Arrow({down=false}){return <span aria-hidden="true">{down?'↓':'↗'}</span>}
 function App(){
   const reduced=useRef(window.matchMedia('(prefers-reduced-motion: reduce)').matches).current;
-  const [mode,setMode]=useState(()=>reduced || window.innerWidth<768 || (navigator.deviceMemory && navigator.deviceMemory<=4) || navigator.connection?.saveData?'stills':'3d');
-  const [active,setActive]=useState(0),[load,setLoad]=useState(0),[ready,setReady]=useState(false),[message,setMessage]=useState(''),[menu,setMenu]=useState(false),[planNear,setPlanNear]=useState(false),[inPlan,setInPlan]=useState(false);
-  const sceneHost=useRef(null),journey=useRef(null),sceneProgress=useRef(0),closing=useRef(false),lenis=useRef(null),progressBar=useRef(null),menuButton=useRef(null);
+  const device=useRef(getDeviceProfile()).current;
+  const [mode,setMode]=useState(()=>reduced || device.mobile || navigator.connection?.saveData?'stills':'3d');
+  const [active,setActive]=useState(0),[load,setLoad]=useState(0),[ready,setReady]=useState(false),[message,setMessage]=useState(''),[menu,setMenu]=useState(false),[inPlan,setInPlan]=useState(false);
+  const sceneHost=useRef(null),sceneController=useRef(null),journey=useRef(null),sceneProgress=useRef(0),closing=useRef(false),lenis=useRef(null),progressBar=useRef(null),menuButton=useRef(null);
   useEffect(()=>{
-    if(!reduced){
+    if(!reduced && !device.touch){
       const smooth=new Lenis({duration:1.35,smoothWheel:true,syncTouch:false,anchors:false});lenis.current=smooth;
       smooth.on('scroll',ScrollTrigger.update);
       const tick=t=>smooth.raf(t*1000);gsap.ticker.add(tick);
       return()=>{gsap.ticker.remove(tick);smooth.destroy();lenis.current=null;};
     }
-  },[reduced]);
+  },[reduced,device]);
   useEffect(()=>{
     const nodes=[...document.querySelectorAll('[data-chapter]')];
-    const triggers=nodes.map((node,i)=>ScrollTrigger.create({trigger:node,start:'top 55%',end:'bottom 55%',onToggle:self=>{if(self.isActive){setActive(i);closing.current=i===9;setInPlan(i===8);}}}));
-    const motion=ScrollTrigger.create({trigger:journey.current,start:'top top',end:'bottom top',onUpdate:self=>{sceneProgress.current=Math.min(7.8,self.progress*8);}});
+    const triggers=nodes.map((node,i)=>ScrollTrigger.create({trigger:node,start:'top 55%',end:'bottom 55%',onToggle:self=>{if(self.isActive){setActive(i);closing.current=i===9;setInPlan(i===8);sceneController.current?.invalidate();}}}));
+    const motion=ScrollTrigger.create({trigger:journey.current,start:'top top',end:'bottom top',onUpdate:self=>{sceneProgress.current=Math.min(7.8,self.progress*8);sceneController.current?.invalidate();}});
     const total=ScrollTrigger.create({start:0,end:'max',onUpdate:self=>{if(progressBar.current)progressBar.current.style.transform=`scaleX(${self.progress})`;}});
-    const intersection=new IntersectionObserver(([entry])=>{if(entry.isIntersecting){setPlanNear(true);intersection.disconnect();}},{rootMargin:'600px'});
-    intersection.observe(document.getElementById('masterplan'));
     requestAnimationFrame(()=>ScrollTrigger.refresh());
-    return()=>{triggers.forEach(t=>t.kill());motion.kill();total.kill();intersection.disconnect();};
+    return()=>{triggers.forEach(t=>t.kill());motion.kill();total.kill();};
   },[]);
   useEffect(()=>{
     if(sceneHost.current)sceneHost.current.dataset.paused=inPlan?'true':'false';
+    sceneController.current?.setPaused(inPlan);
   },[inPlan]);
   useEffect(()=>{
     if(mode!=='3d'){setReady(false);return;}
@@ -48,10 +49,10 @@ function App(){
     const timeout=setTimeout(()=>{setMessage('Your image tour is ready while 3D loads.');},18000);
     const timer=setTimeout(()=>import('./scene').then(({createScene})=>{
       if(controller.signal.aborted)return;
-      return createScene(sceneHost.current,{signal:controller.signal,onProgress:setLoad,onReady:()=>{clearTimeout(timeout);setReady(true);setMessage('');},onFailure:message=>{setMessage(message);setMode('stills');},getProgress:()=>closing.current?7.8:sceneProgress.current,getClosing:()=>closing.current,reducedMotion:reduced});
+      return createScene(sceneHost.current,{signal:controller.signal,onController:value=>{sceneController.current=value;},onProgress:setLoad,onReady:()=>{clearTimeout(timeout);setReady(true);setMessage('');},onFailure:message=>{setMessage(message);setMode('stills');},getProgress:()=>closing.current?7.8:sceneProgress.current,getClosing:()=>closing.current,reducedMotion:reduced,mobile:device.mobile});
     }).then(fn=>{cleanup=fn;if(controller.signal.aborted)cleanup?.();}).catch(()=>{setMode('stills');setMessage('Continue with the image tour.');}),250);
-    return()=>{clearTimeout(timer);clearTimeout(timeout);controller.abort();cleanup?.();};
-  },[mode,reduced]);
+    return()=>{clearTimeout(timer);clearTimeout(timeout);controller.abort();cleanup?.();sceneController.current=null;};
+  },[mode,reduced,device]);
   useEffect(()=>{
     if(!menu)return;
     const handler=e=>{if(e.key==='Escape'){setMenu(false);menuButton.current?.focus();}};
@@ -62,7 +63,7 @@ function App(){
     const el=document.getElementById(id);if(!el)return;
     const top=el.getBoundingClientRect().top+window.scrollY;
     history.replaceState(null,'',`#${id}`);
-    if(lenis.current){lenis.current.resize();lenis.current.scrollTo(top,{duration:1.6});}else window.scrollTo({top,behavior:'instant'});
+    if(lenis.current){lenis.current.resize();lenis.current.scrollTo(top,{duration:1.6});}else window.scrollTo({top,behavior:reduced?'instant':'smooth'});
     el.focus({preventScroll:true});
   }
   const image=active===9?'evening':chapters[Math.min(active,7)].image;
@@ -91,7 +92,7 @@ function App(){
       </div>
       <section id="masterplan" tabIndex={-1} data-chapter className="masterplan-section">
         <div className="plan-heading"><div><p className="eyebrow"><span/>08 / The master plan</p><h2>Every place.<br/><em>One considered whole.</em></h2></div><p>Explore the original site plan.<br/>A closer look at how it all comes together.</p></div>
-        {planNear?<Suspense fallback={<div className="plan-loading">Preparing the master plan…</div>}><MasterPlan /></Suspense>:<div className="plan-loading"><img src="/assets/masterplan.webp" alt="Shangri-La Hua Hin site master plan" loading="lazy"/></div>}
+        <MasterPlan />
         <div className="plan-legend"><span><b>A / B</b> Residences</span><span><b>P03</b> Pavilion</span><span><b>P04</b> Swimming pool</span><span><b>P05</b> Pool facilities</span><span><b>P06</b> Staff accommodation</span><span><b>P07</b> Guardhouse</span></div>
         <div className="plan-note"><span>ORIGINAL PROJECT DRAWING</span><span>18 SEPTEMBER 2026 · DIMENSIONS IN METRES</span></div>
       </section>

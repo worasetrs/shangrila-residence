@@ -2,20 +2,35 @@
 No source .blend is saved. Preserve source geometry and evaluated edge modifiers;
 batch by source collection and material, without changing any site dimensions.
 """
-import bpy, json, math, time, hashlib
+import bpy, json, math, time, hashlib, sys
 import numpy as np
 from pathlib import Path
 from mathutils import Vector
 
 ROOT = Path(__file__).resolve().parents[1]
+MOBILE = '--mobile' in sys.argv
+RAW = ROOT/('qa/mobile-source-export.glb' if MOBILE else 'qa/source-export.glb')
 source = bpy.data.scenes['SHANGRILA_MASTER']
 bpy.context.window.scene = source
 # Web-only tessellation of tiny rounded edges. This changes only this disposable
 # background process, never the source file or the dimensions of any object.
 for o in source.objects:
  for modifier in o.modifiers:
-  if modifier.type=='BEVEL':modifier.segments=min(modifier.segments,1 if modifier.width<=.12 else 2)
- if o.type=='CURVE':o.data.bevel_resolution=min(o.data.bevel_resolution,1)
+  if modifier.type=='BEVEL':
+   modifier.segments=min(modifier.segments,1 if modifier.width<=.12 else 2)
+   if MOBILE and modifier.width<=.03:modifier.show_viewport=False
+ if o.type=='CURVE':o.data.bevel_resolution=min(o.data.bevel_resolution,0 if MOBILE else 1)
+ # Each source canopy leaf is a five-vertex, four-triangle fan. Flatten only
+ # its tiny centre ridge into a quad: every leaf, tree position and outline stays.
+ if MOBILE and o.type=='MESH' and ('broadleaf canopy' in o.name or 'layered shrub foliage' in o.name):
+  original=o.data
+  if len(original.vertices)%5==0 and len(original.polygons)==len(original.vertices)//5*4:
+   verts=[];faces=[];indices=[]
+   for leaf in range(len(original.vertices)//5):
+    start=len(verts);verts.extend(tuple(original.vertices[leaf*5+k].co) for k in range(4));faces.append(tuple(start+k for k in range(4)));indices.append(original.polygons[leaf*4].material_index)
+   replacement=bpy.data.meshes.new(o.name+'_MOBILE_LEAVES');replacement.from_pydata(verts,[],faces)
+   for material in original.materials:replacement.materials.append(material)
+   replacement.polygons.foreach_set('material_index',indices);replacement.update();o.data=replacement
 bpy.context.view_layer.update()
 deps = bpy.context.evaluated_depsgraph_get()
 groups = {}
@@ -96,7 +111,7 @@ for o in source.objects:
   p=o.matrix_world.translation; d=o.matrix_world.to_quaternion()@Vector((0,0,-1))
   conv=lambda v:[round(v.x,5),round(v.z,5),round(-v.y,5)]
   cams.append({'name':o.name,'position':conv(p),'direction':conv(d),'fov':round(math.degrees(o.data.angle),3)})
-(ROOT/'public/assets/cameras.json').write_text(json.dumps(cams,indent=2))
-bpy.ops.export_scene.gltf(filepath=str(ROOT/'qa/source-export.glb'),export_format='GLB',use_active_scene=True,use_visible=False,use_renderable=False,export_cameras=False,export_lights=False,export_animations=False,export_yup=True,export_texcoords=False,export_normals=True,export_materials='EXPORT')
-report={'source':bpy.data.filepath,'source_sha256':hashlib.sha256(Path(bpy.data.filepath).read_bytes()).hexdigest(),'source_objects':len(source.objects),'exported_source_objects':len(object_groups),'web_batches':len(web.objects),'materials':len(webmats),'seconds':round(time.time()-started),'geometry_policy':'No decimation. Evaluated modifiers retained. Hidden archives/reference excluded. Procedural finishes reduced to original PBR base values.','export_bytes':(ROOT/'qa/source-export.glb').stat().st_size}
-(ROOT/'qa/export-report.json').write_text(json.dumps(report,indent=2));print('EXPORT_COMPLETE',json.dumps(report),flush=True)
+if not MOBILE:(ROOT/'public/assets/cameras.json').write_text(json.dumps(cams,indent=2))
+bpy.ops.export_scene.gltf(filepath=str(RAW),export_format='GLB',use_active_scene=True,use_visible=False,use_renderable=False,export_cameras=False,export_lights=False,export_animations=False,export_yup=True,export_texcoords=False,export_normals=True,export_materials='EXPORT')
+report={'source':bpy.data.filepath,'source_sha256':hashlib.sha256(Path(bpy.data.filepath).read_bytes()).hexdigest(),'profile':'mobile' if MOBILE else 'desktop','source_objects':len(source.objects),'exported_source_objects':len(object_groups),'web_batches':len(web.objects),'materials':len(webmats),'seconds':round(time.time()-started),'geometry_policy':('Leaf fans converted to quads without removing leaves; sub-3cm bevels disabled; thin curves use four-sided cross sections. All buildings and interiors retained.' if MOBILE else 'Small bevel tessellation reduced. Source geometry and site dimensions retained.')+' Hidden archives/reference excluded; procedural finishes use original PBR base values.','export_bytes':RAW.stat().st_size}
+(ROOT/('qa/mobile-export-report.json' if MOBILE else 'qa/export-report.json')).write_text(json.dumps(report,indent=2));print('EXPORT_COMPLETE',json.dumps(report),flush=True)

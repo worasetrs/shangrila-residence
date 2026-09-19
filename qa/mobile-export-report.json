@@ -1,0 +1,12 @@
+{
+  "source": "C:\\Shangrila Working\\03_BLENDER\\SHANGRILA_MASTER_REFINED.blend",
+  "source_sha256": "ec86a392532094b31e19cccea5bbec32c9cf76e4f10274bf36f59fa151aa0051",
+  "profile": "mobile",
+  "source_objects": 28170,
+  "exported_source_objects": 17080,
+  "web_batches": 169,
+  "materials": 47,
+  "seconds": 125,
+  "geometry_policy": "Leaf fans converted to quads without removing leaves; sub-3cm bevels disabled; thin curves use four-sided cross sections. All buildings and interiors retained. Hidden archives/reference excluded; procedural finishes use original PBR base values.",
+  "export_bytes": 65117416
+}
