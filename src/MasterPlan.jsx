@@ -3,7 +3,7 @@ const IMAGE='/assets/masterplan.webp';
 const WIDTH=2384, HEIGHT=1684;
 export default function MasterPlan(){
   const [zoom,setZoom]=useState(1),[fit,setFit]=useState(.4),[full,setFull]=useState(false),[failed,setFailed]=useState(false);
-  const viewport=useRef(null),panel=useRef(null),drag=useRef(null),fullButton=useRef(null);
+  const viewport=useRef(null),panel=useRef(null),drag=useRef(null);
   useEffect(()=>{
     const el=viewport.current;
     const resize=()=>setFit(Math.max(.05,Math.min((el.clientWidth-40)/WIDTH,(el.clientHeight-40)/HEIGHT)));
@@ -30,13 +30,13 @@ export default function MasterPlan(){
   const adjust=value=>setZoom(z=>Math.max(.75,Math.min(4,Math.round((z+value)*100)/100)));
   function reset(){setZoom(1);viewport.current.scrollTo({top:0,left:0});}
   return <div ref={panel} className={`plan-viewer ${full?'fullscreen':''}`} role={full?'dialog':undefined} aria-modal={full?true:undefined} aria-label="Original site master plan viewer">
-    <div className="plan-toolbar"><span className="drawing-name">SITE MASTER PLAN <small>01 / 01</small></span><div className="plan-tools"><button aria-label="Zoom out" disabled={zoom<=.75} onClick={()=>adjust(-.25)}>−</button><output aria-label="Zoom level">{Math.round(zoom*100)}%</output><button aria-label="Zoom in" disabled={zoom>=4} onClick={()=>adjust(.25)}>+</button><button className="fit-button" onClick={reset} aria-label="Fit plan to view">Fit</button><span className="tool-divider"/><button ref={fullButton} onClick={()=>setFull(!full)} aria-label={full?'Exit fullscreen':'View fullscreen'}>{full?'Close ×':'Expand ⤢'}</button><a href={IMAGE} target="_blank" rel="noreferrer" aria-label="Open master plan image in a new tab">Image ↗</a><a href={IMAGE} download="SHANGRILA_HUA_HIN_MASTERPLAN.webp" aria-label="Download master plan image">↓</a></div></div>
+    <div className="plan-toolbar"><span className="drawing-name">SITE MASTER PLAN <small>01 / 01</small></span><div className="plan-tools"><button aria-label="Zoom out" disabled={zoom<=.75} onClick={()=>adjust(-.25)}>−</button><output aria-label="Zoom level">{Math.round(zoom*100)}%</output><button aria-label="Zoom in" disabled={zoom>=4} onClick={()=>adjust(.25)}>+</button><button className="fit-button" onClick={reset} aria-label="Fit plan to view">Reset</button><span className="tool-divider"/><button onClick={()=>setFull(!full)} aria-label={full?'Exit fullscreen':'View fullscreen'}>{full?'Close ×':'Open full plan ⤢'}</button><a href={IMAGE} target="_blank" rel="noreferrer" aria-label="Open master plan image in a new tab">Image ↗</a><a href={IMAGE} download="SHANGRILA_HUA_HIN_MASTERPLAN.webp" aria-label="Download master plan image">↓</a></div></div>
     <div ref={viewport} className="plan-viewport" data-lenis-prevent={zoom>1||full?'':undefined} style={{overscrollBehavior:zoom>1||full?'contain':'auto'}} tabIndex={0} aria-label="Master plan. Use plus and minus to zoom, arrow keys to pan. Drag to move the enlarged drawing."
       onKeyDown={e=>{if(['+','='].includes(e.key)){e.preventDefault();adjust(.25);}if(e.key==='-'){e.preventDefault();adjust(-.25);}if(e.key==='0'){e.preventDefault();reset();}}}
       onPointerDown={e=>{if(e.pointerType!=='mouse')return;drag.current={x:e.clientX,y:e.clientY,left:e.currentTarget.scrollLeft,top:e.currentTarget.scrollTop};e.currentTarget.setPointerCapture(e.pointerId);}}
       onPointerMove={e=>{if(!drag.current)return;e.currentTarget.scrollLeft=drag.current.left+drag.current.x-e.clientX;e.currentTarget.scrollTop=drag.current.top+drag.current.y-e.clientY;}}
       onPointerUp={()=>{drag.current=null;}} onPointerCancel={()=>{drag.current=null;}}>
-      <div className="plan-sheet"><img src={IMAGE} width={WIDTH} height={HEIGHT} loading="lazy" decoding="async" draggable={false} onError={()=>setFailed(true)} onLoad={()=>setFailed(false)} alt="Shangri-La Hua Hin master plan: residences A and B, the central pool and planted island, restaurant, pool facilities, staff accommodation and entrance." style={{width:WIDTH*fit*zoom,height:HEIGHT*fit*zoom}}/></div>
+      <div className="plan-sheet">{failed?<div className="image-placeholder"><strong>Site master plan</strong><p>The preview is temporarily unavailable.</p><a href="/assets/SITE_MASTERPLAN.pdf" target="_blank" rel="noreferrer">Open original master plan PDF ↗</a></div>:<img src={IMAGE} width={WIDTH} height={HEIGHT} loading="lazy" decoding="async" draggable={false} onError={()=>setFailed(true)} alt="Shangri-La Hua Hin master plan: residences A and B, the central pool and planted island, restaurant, pool facilities, staff accommodation and entrance." style={{width:WIDTH*fit*zoom,height:HEIGHT*fit*zoom}}/>}</div>
     </div>
     <div className="plan-caption"><span>{failed?'Image unavailable. Please reload the page.':'Zoom in to explore · drag to pan'}</span><span>ORIGINAL SITE PLAN · IMAGE</span></div>
   </div>;

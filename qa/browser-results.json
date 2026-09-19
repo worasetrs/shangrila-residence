@@ -1,18 +1,33 @@
 [
   {
     "viewport": "desktop",
-    "chapters": 10,
+    "chapters": 8,
+    "interiorGroups": 8,
     "horizontalOverflow": false,
     "masterPlan": "Direct 2384×1684 image; no PDF or worker requests",
     "zoom": true,
     "fullscreen": true,
     "backToTop": true,
+    "explore": {
+      "originalQuality": true,
+      "pixelRatio": 1,
+      "rotate": true,
+      "zoom": true,
+      "pan": true,
+      "hotspots": 7,
+      "cameraOutsideBuildings": true,
+      "zeroIdleFrames": true,
+      "continueTour": true,
+      "maxReturnFrameDistance": 8.686758074952607,
+      "pausesForInteriors": true
+    },
     "errors": [],
     "failures": []
   },
   {
     "viewport": "tablet",
-    "chapters": 10,
+    "chapters": 8,
+    "interiorGroups": 8,
     "horizontalOverflow": false,
     "masterPlan": "Direct 2384×1684 image; no PDF or worker requests",
     "zoom": true,
@@ -23,21 +38,25 @@
   },
   {
     "viewport": "mobile",
-    "chapters": 10,
+    "chapters": 8,
+    "interiorGroups": 8,
     "horizontalOverflow": false,
     "masterPlan": "Direct 2384×1684 image; no PDF or worker requests",
     "zoom": true,
     "fullscreen": true,
     "backToTop": true,
-    "mobile3d": {
-      "profile": "mobile",
-      "modelURL": "/assets/SHANGRILA_MOBILE.glb",
-      "pixelRatio": 1,
-      "heroTriangles": 1335194,
-      "idleFrames": 0,
-      "nativeTouchScroll": true,
-      "rotationKeepsMobileModel": true,
-      "environment": "Headless Edge, touch viewport with DPR 3 and 4× CPU throttling. No physical phone GPU claim.",
+    "explore": {
+      "originalQuality": true,
+      "pixelRatio": 1.5,
+      "rotate": true,
+      "zoom": true,
+      "pan": true,
+      "hotspots": 7,
+      "cameraOutsideBuildings": true,
+      "zeroIdleFrames": true,
+      "continueTour": true,
+      "maxReturnFrameDistance": 30.18530428249437,
+      "pausesForInteriors": true,
       "pausesOverPlan": true,
       "releasesRenderer": true
     },
@@ -49,6 +68,9 @@
   },
   {
     "failureRecovery": "Blocked GLB returns to image tour; master plan image works with PDF unavailable"
+  },
+  {
+    "missingImages": "Clean interior placeholder and master-plan PDF link; no broken images"
   },
   {
     "build": "production dist"

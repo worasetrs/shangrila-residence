@@ -7,13 +7,6 @@ const gltf=JSON.parse(model.subarray(20,20+model.readUInt32LE(12)).toString());
 assert.equal(gltf.scenes.length,1,'Only the web scene should be exported');
 assert(gltf.extensionsRequired.includes('EXT_meshopt_compression'));
 assert(!gltf.nodes.some(n=>/ARCHIVE|REFERENCE|Cube/.test(n.name||'')),'Hidden/reference geometry leaked into export');
-const mobile=await readFile('public/assets/SHANGRILA_MOBILE.glb');
-assert.equal(mobile.toString('ascii',0,4),'glTF');assert.equal(mobile.readUInt32LE(4),2);assert.equal(mobile.readUInt32LE(8),mobile.length);
-const mobileGltf=JSON.parse(mobile.subarray(20,20+mobile.readUInt32LE(12)).toString());
-assert.equal(mobileGltf.scenes.length,1);
-assert(mobileGltf.extensionsRequired.includes('EXT_meshopt_compression'));
-assert.deepEqual(mobileGltf.nodes.map(n=>n.name).sort(),gltf.nodes.map(n=>n.name).sort(),'Mobile must retain every exported batch');
-assert(mobile.length<model.length*.6,'Mobile download should be substantially smaller');
 const cameras=JSON.parse(await readFile('public/assets/cameras.json','utf8'));
 assert(cameras.length>=13);
 for(const name of ['01_AERIAL','02_ENTRANCE','03_POOL','06_RESTAURANT','P26_A_HERO','P26_B_HERO','SOURCE_INTERIOR_SOUTH','07_P05','08_P06','13_GF_PARKING'])assert(cameras.some(c=>c.name===name),`Missing ${name}`);
@@ -26,7 +19,14 @@ for(const name of ['aerial','arrival','pool','pavilion','building-a','building-b
 const sourceModel=await readFile('../03_BLENDER/SHANGRILA_MASTER_REFINED.blend');
 const report=JSON.parse(await readFile('qa/export-report.json','utf8'));
 assert.equal(hash(sourceModel),report.source_sha256,'Source Blender file changed since export');
-const mobileReport=JSON.parse(await readFile('qa/mobile-export-report.json','utf8'));
-assert.equal(hash(sourceModel),mobileReport.source_sha256,'Mobile export must use the same source Blender');
-assert.equal(mobileReport.exported_source_objects,report.exported_source_objects,'Mobile must retain all source objects');
-console.log(`Assets verified: ${(model.length/1048576).toFixed(1)} MiB desktop, ${(mobile.length/1048576).toFixed(1)} MiB mobile, ${gltf.nodes.length} nodes each, ${cameras.length} source cameras. Source Blender and PDF preserved.`);
+const interiors=JSON.parse(await readFile('src/data/interior-assets.json','utf8'));
+assert.equal(Object.keys(interiors).length,9);
+for(const [id,item] of Object.entries(interiors)){
+ if(!item)continue;
+ for(const path of [item.src,item.small])assert((await stat('public'+path)).size>1000,`Missing ${id}`);
+}
+const assetsReport=JSON.parse(await readFile('qa/interior-assets.json','utf8'));
+for(const item of assetsReport.images)assert.equal(hash(await readFile('../'+item.source)),item.sha256,`Source image changed: ${item.id}`);
+const hotspotAssets=JSON.parse(await readFile('qa/hotspot-assets.json','utf8'));
+for(const item of Object.values(hotspotAssets)){assert.equal(hash(await readFile('../'+item.source)),item.sha256);assert((await stat('public'+item.output)).size>1000);}
+console.log(`Assets verified: ${(model.length/1048576).toFixed(1)} MiB original-quality GLB on all devices, ${gltf.nodes.length} nodes, ${cameras.length} cameras, ${Object.keys(interiors).length} interior images. Source Blender, PDF and images preserved.`);

@@ -1,88 +1,94 @@
-# Shangri-La Hua Hin
+# Shangri-La Residence · Hua Hin
 
-A scroll-driven architectural presentation, built with React, Vite, Three.js, GSAP ScrollTrigger and Lenis. All project geometry comes from `SHANGRILA_MASTER_REFINED.blend`.
+An architectural presentation built on the existing Shangri-La visual identity with React, Vite, Three.js, GSAP ScrollTrigger and Lenis. The source architecture is unchanged.
 
-## Open locally
+## Run and deploy
 
-Requires Node.js 22.12+.
+Requires Node.js 22.12 or newer.
 
 ```sh
 npm ci
 npm run dev
-```
-
-Open the local URL printed by Vite. For a production preview:
-
-```sh
 npm run build
 npm run preview
 ```
 
-## Netlify
+Netlify repository deployment: build command `npm run build`, publish directory `dist`. `netlify.toml` contains these settings. For manual deployment, extract `SHANGRILA_WEB_NETLIFY.zip` and upload the extracted folder containing `index.html`. No backend, API keys or environment variables are needed. GitHub push and Netlify publication are separate; this task does not configure a Netlify account.
 
-The project is ready for a static Netlify deployment. Import this folder as a repository with build command `npm run build` and publish directory `dist`; `netlify.toml` supplies both settings. Alternatively, drag the contents of the built `dist` folder into Netlify's manual deployment interface. No API keys, backend, database or environment variables are required. The local preview has not been published to a Netlify account.
+## The experience
 
-## Experience
+Eight main chapters: bird-eye hero, project orbit, arrival, pool/common areas, Explore, interior imagery, master plan and evening closing. Navigation and the camera path follow this order. The opening has one subtle four-second camera drift; reduced-motion users see no drift.
 
-Ten chapters cover the bird-eye view, project overview, arrival, pool, pavilion, Buildings A/B, original-design interiors, P05/P06/ground-floor parking, original master plan and closing view. The camera follows the scroll position, and chapter navigation works with mouse, keyboard and touch.
+**Guided tour:** scrolling moves the exterior camera through the source views and elevated connecting shots. Touch devices use native page scrolling; desktop wheel input uses Lenis. The interior section uses images, with no live interior camera sequence.
 
-- Desktop loads the GLB asynchronously behind a source-rendered poster. The loading status never blocks navigation.
-- Mobile, touch tablets, reduced-motion preferences, data-saver connections and low-memory devices begin in the image tour. Visitors can opt into 3D.
-- Touch and small-screen devices use the 11.1 MB mobile model. The device profile stays stable when rotating the screen. Touch scrolling is native; desktop wheel scrolling uses Lenis.
-- Mobile renders at a maximum pixel ratio of 1, with MSAA and shadow maps disabled. Environment and directional lighting remain. Pixel ratio can fall to 0.7 under sustained load; desktop retains shadows and a maximum ratio of 1.5.
-- Rendering runs while the camera eases, stops completely at rest, and pauses over the plan or while the browser tab is hidden. Animated rendering is capped at 60 Hz. Scroll, resize and visibility changes wake it again.
-- WebGL failure or context loss returns to the image tour. Switching to images aborts pending model downloads and releases the renderer and geometry.
-- The master plan is a direct 2384×1684 WebP image rendered from the original drawing. It supports zoom, mouse drag, native touch pan, keyboard pan, fullscreen, opening in a new tab and image download. Escape closes fullscreen and restores focus. It needs no PDF viewer, PDF request or worker.
-- Fonts, both models and images are served locally; no runtime CDN is needed.
+**Explore:** explicit opt-in in chapter five. Left-drag rotates, wheel zooms and right-drag pans. Touch uses one finger to rotate and two fingers to zoom/pan. Arrow keys pan when the canvas is focused. Instructions appear once. Reset View and Back to overview use a 1.25-second camera transition. Continue Tour returns to the current guided camera before releasing the page and moving to interiors. Exit Explore or Escape returns to the same section. Reduced motion makes these transitions immediate.
 
-## Source assets and fidelity
+Explore stops the scroll camera and locks the page only while active. Focus is contained in the Explore dialog; background navigation is inert. Camera distance, polar angle and target bounds are constrained. Inflated bounds from source buildings prevent entering or crossing building volumes during orbit/pan/zoom; preset focus transitions travel above those buildings. These conservative exterior bounds intentionally keep some close views out of reach. Seven accessible hotspots focus the source cameras and show an image/details panel with Back to overview.
 
-Source file: `../03_BLENDER/SHANGRILA_MASTER_REFINED.blend`.
+**Mobile quality restored:** phones load the same `SHANGRILA_MASTER_REFINED.glb` as desktop. Antialiasing is enabled, pixel ratio is capped at 1.5, and the original cached 2048px shadows are restored. There is no automatic drop to the former pixel ratio of 0.7 or stripped mobile geometry. Image mode is the initial experience on touch, low-memory, data-saver and reduced-motion devices; 3D remains opt-in. The device choice stays stable on rotation.
 
-Master plan: `../00_ORIGINAL/SITE_MASTERPLAN.pdf`, 18 September 2026. The page displays and downloads `public/assets/masterplan.webp`. A byte-identical copy of the original PDF remains in the assets for archival use. Building A/B and aerial posters use the latest pages 2–6 review renders. Interior imagery uses the source-corrected interior review. Other posters come from the existing refined review renders; the evening poster predates the latest facade pass, while live 3D always uses the current model.
+Rendering occurs during camera motion or interaction, then stops entirely at rest. It pauses over interiors/master plan/closing and in hidden tabs. Shadow maps are computed once for the static scene. Animation is capped at 60 Hz. Model downloads are abortable; switching to images releases the renderer. WebGL failure/context loss returns to a visible image tour.
 
-The original Blender and PDF files are never saved over. Hidden archive/reference collections, cameras and lights are excluded from the GLB. Source dimensions, architecture, site layout and interiors are retained. Small bevels and thin curve sections use fewer radial segments in the web export. Spatial batches undergo bounded mesh simplification, then merge by original collection and material, followed by meshopt compression. The large context ground stays separate to protect the precision of the roads. The desktop model is approximately 24.8 MB with 150 material primitives and 2.12 million triangles. Blender procedural finishes are reduced to their original material base colours and roughness; complex offline shading is not reproduced exactly. Glass uses real-time transparency, and dusk is a presentation lighting treatment.
+## Asset paths and provenance
 
-The mobile model retains the same 17,080 source objects, 46 exported batches and source camera path. Leaf fans become flat quads without removing leaves; bevel modifiers up to 3 cm are disabled and thin curves use four-sided cross sections. It contains 1.30 million triangles in 11.1 MB: about 39% fewer triangles and 55% fewer download bytes than desktop. This simplifies small surface details without removing buildings, interiors or planting locations.
+| Asset | Runtime path | Source |
+| --- | --- | --- |
+| Full-quality model | `public/assets/SHANGRILA_MASTER_REFINED.glb` | `../03_BLENDER/SHANGRILA_MASTER_REFINED.blend` |
+| Camera poses | `public/assets/cameras.json` | 28 cameras from the source Blender scene |
+| Exterior fallback/closing | `public/assets/*.webp` | Existing project review renders |
+| Master plan preview | `public/assets/masterplan.webp` | Rasterized original `SITE_MASTERPLAN.pdf`, 2384×1684 |
+| Original master plan | `public/assets/SITE_MASTERPLAN.pdf` | Byte-identical source PDF |
+| Interior images | `public/images/interior/*.webp` | Existing interior presentation exports and concepts |
+| P05 hotspot image | `public/images/hotspots/p05.webp` | `../03_BLENDER/review/12_P05_REVIEW.png` |
 
-The GLB is an architectural presentation asset. Original model coordination qualifications remain applicable; see `../03_BLENDER/MODEL_COORDINATION_NOTES.md`.
+The 24.8 MB model contains 2.12 million triangles and 150 material primitives. Geometry was spatially batched, conservatively simplified and meshopt-compressed. The broad context ground stays separate for road precision. Original object dimensions and site layout are retained. Blender procedural finishes use their original base colours/roughness; real-time shading differs from offline rendering. The evening poster is an existing presentation image and predates the latest facade pass.
 
-## Project structure
+Interior storytelling contains eight groups and nine images: Main Living, Dining, Kitchen, Master Bedroom, Master Bathroom, Restaurant Interior, P05 Spa/Sauna and P06 Staff Accommodation. Living/Dining/Kitchen are native images from the original interior design PDF (`06_INTERIOR_PRESENTATION_IMAGES/03_FINAL_OUTPUT`). The remaining images are existing **provisional AI concept studies**, visibly captioned **CONCEPT STUDY · DESIGN UNDER REVIEW**. They are not claimed to be final approved designs or current-model renders. P06 uses the staff-room image, avoiding the known lounge layout discrepancy. No unfinished files from the concurrently developed photoreal render folder are used.
+
+`qa/interior-assets.json` records exact source paths/hashes, provenance, missing assets and groups still awaiting final images. There are currently no missing image files; five groups lack final source imagery and use the labelled concepts. Missing or failed images display a clean placeholder. Images use responsive WebP variants, lazy decoding/loading and no artificial upscaling. Native Kitchen resolution is 1264×841.
+
+The master plan stays a direct image with zoom, mouse drag, native touch pan, keyboard pan and fullscreen. No PDF.js, worker or iframe is loaded. The original PDF is available as an explicit link. If the image fails, its viewer displays a PDF link instead of a broken image. All assets and fonts are local; no runtime CDN is used.
+
+## Code map
 
 ```text
-src/main.jsx             Narrative, navigation, mode switching, scroll lifecycle
-src/story.js             Chapter copy and source-camera choreography
-src/scene.js             Three.js renderer, lighting, loading and cleanup
-src/MasterPlan.jsx       Direct plan image, zoom, pan and fullscreen
-src/device.js            Stable mobile/touch rendering profile
-src/style.css            Responsive visual system
-public/assets/           Desktop/mobile GLBs, cameras, WebP images and archived PDF
-scripts/export_web.py    Reproducible Blender conversion (source stays unchanged)
-scripts/optimize.mjs     Geometry optimization and meshopt compression
-scripts/check-assets.mjs Source integrity and GLB checks
-qa/                     Export statistics and browser verification reports
-netlify.toml             Netlify build and response headers
+src/main.jsx                         Navigation, mode and scroll lifecycle
+src/scene.js                         Original-quality rendering/loading/cleanup
+src/explorer.js                      Orbit controls, bounds and camera transitions
+src/story.js                         Central exterior camera keyframes
+src/data/project.js                 Chapters and interior story configuration
+src/data/hotspots.js                 Hotspot/source-camera definitions and limits
+src/data/interior-assets.json        Generated responsive image manifest
+src/components/ExploreControls.jsx   Explore toolbar, hotspot buttons and details
+src/components/InteriorGallery.jsx   Image story and failure placeholders
+src/components/LoadingScreen.jsx     Minimal non-blocking loading indicator
+src/MasterPlan.jsx                   Master plan image viewer
+src/style.css                       Existing brand system
+src/experience.css                  Interactive/editorial responsive extensions
 ```
 
-## Regenerate the model
+To regenerate imagery, run `python scripts/prepare-interiors.py` with Pillow installed. It reads existing project files, writes WebP variants and updates the manifests. Update the corresponding image entry and provenance when final images become available.
 
-Run the export in a Blender 5.2 background process (edit the source path if necessary):
+`python scripts/prepare-hotspots.py` prepares the P05 exterior review image and its provenance manifest. Other hotspot images reuse the existing exterior posters.
+
+To regenerate the model, run Blender 5.2 in background mode against the original source, then optimize. No source `.blend` is saved over:
 
 ```powershell
 & 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe' -b '..\03_BLENDER\SHANGRILA_MASTER_REFINED.blend' --python 'scripts\export_web.py'
 node scripts/optimize.mjs
-& 'C:\Program Files\Blender Foundation\Blender 5.2\blender.exe' -b '..\03_BLENDER\SHANGRILA_MASTER_REFINED.blend' --python 'scripts\export_web.py' -- --mobile
-node scripts/optimize.mjs --mobile
-npm run check:assets
-npm run build
 ```
 
-`export_web.py` writes only into this project. Large intermediate GLBs stay in `qa/` and are ignored by Git. Both deployable models are included under `public/assets/`. Desktop and `mobile-` export/optimization reports in `qa/` record source hashes, batch counts and sizes.
+The older optional `--mobile` conversion and its reports describe a superseded experiment. The live site never selects that model; regeneration of that tier is unnecessary.
 
 ## Verification
 
-`npm run check:assets` validates both GLB headers, meshopt compression, matching scene batches, the mobile size reduction, source camera set, image files, unchanged source Blender and archived PDF.
+```sh
+npm run check:assets
+npm run build
+node scripts/browser-qa.mjs --production
+node scripts/browser-qa.mjs --production --smoke
+```
 
-Run `node scripts/browser-qa.mjs --production` after building. Checks cover 1440×960 desktop, 820×1180 touch tablet, 390×844 mobile, all ten chapters, navigation, image zoom/fit/fullscreen/Escape, no PDF/worker requests, no horizontal overflow, reduced-motion loading and failed-model recovery. Mobile checks opt into 3D with DPR 3 and 4× CPU throttling, verify the smaller model and render resolution, exercise a native touch gesture and screen rotation, and verify zero idle frames, pausing over the plan and renderer cleanup. `qa/browser-results.json` records the result.
+Asset checks verify GLB structure/compression, required source cameras, unchanged source Blender/PDF and source image hashes. Production browser checks cover desktop, touch tablet and a DPR-3 mobile viewport: guided navigation, rotate/zoom/pan including real touch events, seven hotspots, reset, camera clearance, smooth return, scroll release, rotation, idle rendering, eight interior groups, spa/sauna switching, master plan controls, reduced motion and asset-failure recovery. Results and screenshots are in `qa/`. Browser scripts use the bundled Playwright installation; set `PLAYWRIGHT_MODULE` to use another installation.
 
-These are local headless Edge tests, not physical iOS/Android GPU benchmarks. The earlier `qa/scene-results.json` records browser animation callbacks, not 3D throughput. No phone frame-rate guarantee is inferred from it. Final performance depends on device GPU, network and browser; the image tour is available throughout. Browser scripts use the bundled Playwright runtime; set `PLAYWRIGHT_MODULE` if using a different installation.
+These checks run in headless Edge on the local machine, not physical iOS/Android hardware. Rendering speed depends on the device GPU and network; no phone frame-rate guarantee is inferred from browser callbacks.

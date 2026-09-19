@@ -1,0 +1,74 @@
+{
+  "living": {
+    "src": "/images/interior/living.webp",
+    "small": "/images/interior/living-960.webp",
+    "width": 2400,
+    "height": 1598,
+    "smallWidth": 960,
+    "concept": false
+  },
+  "dining": {
+    "src": "/images/interior/dining.webp",
+    "small": "/images/interior/dining-960.webp",
+    "width": 2400,
+    "height": 1598,
+    "smallWidth": 960,
+    "concept": false
+  },
+  "kitchen": {
+    "src": "/images/interior/kitchen.webp",
+    "small": "/images/interior/kitchen-960.webp",
+    "width": 1264,
+    "height": 841,
+    "smallWidth": 960,
+    "concept": false
+  },
+  "bedroom": {
+    "src": "/images/interior/bedroom.webp",
+    "small": "/images/interior/bedroom-960.webp",
+    "width": 1536,
+    "height": 1024,
+    "smallWidth": 960,
+    "concept": true
+  },
+  "bathroom": {
+    "src": "/images/interior/bathroom.webp",
+    "small": "/images/interior/bathroom-960.webp",
+    "width": 1536,
+    "height": 1024,
+    "smallWidth": 960,
+    "concept": true
+  },
+  "restaurant": {
+    "src": "/images/interior/restaurant.webp",
+    "small": "/images/interior/restaurant-960.webp",
+    "width": 1536,
+    "height": 1024,
+    "smallWidth": 960,
+    "concept": true
+  },
+  "spa": {
+    "src": "/images/interior/spa.webp",
+    "small": "/images/interior/spa-960.webp",
+    "width": 1536,
+    "height": 1024,
+    "smallWidth": 960,
+    "concept": true
+  },
+  "sauna": {
+    "src": "/images/interior/sauna.webp",
+    "small": "/images/interior/sauna-960.webp",
+    "width": 1536,
+    "height": 1024,
+    "smallWidth": 960,
+    "concept": true
+  },
+  "staff": {
+    "src": "/images/interior/staff.webp",
+    "small": "/images/interior/staff-960.webp",
+    "width": 1536,
+    "height": 1024,
+    "smallWidth": 960,
+    "concept": true
+  }
+}

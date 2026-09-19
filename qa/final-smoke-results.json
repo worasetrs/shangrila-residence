@@ -1,0 +1,16 @@
+[
+  {
+    "build": "production",
+    "directExploreFromImageMode": true,
+    "p05SourceImage": true,
+    "keyboardPan": true,
+    "touchTargets44px": true,
+    "exitExplore": true,
+    "escape": true,
+    "focusRestored": true,
+    "errors": []
+  },
+  {
+    "build": "production dist"
+  }
+]
