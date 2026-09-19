@@ -18,7 +18,9 @@ if(process.argv.includes('--production')){
 }
 const base=server?'http://127.0.0.1:4173/':process.env.QA_URL || 'http://127.0.0.1:5173/';
 try{
- if(process.argv.includes('--smoke')){
+ if(process.argv.includes('--lighting')){
+  const {checkLighting}=await import('./lighting-qa.mjs');results.push(...await checkLighting(browser,base));
+ }else if(process.argv.includes('--smoke')){
   const {checkFinalSmoke}=await import('./final-smoke.mjs');results.push(await checkFinalSmoke(browser,base));
  }else{
  for(const config of [{name:'desktop',width:1440,height:960},{name:'tablet',width:820,height:1180},{name:'mobile',width:390,height:844}]){
@@ -137,7 +139,7 @@ try{
  results.push({missingImages:'Clean interior placeholder and master-plan PDF link; no broken images'});await missingContext.close();
  }
  results.push({build:server?'production dist':'development'});
- await writeFile(process.argv.includes('--smoke')?'qa/final-smoke-results.json':'qa/browser-results.json',JSON.stringify(results,null,2));console.log(JSON.stringify(results,null,2));
+ await writeFile(process.argv.includes('--lighting')?'qa/lighting-results.json':process.argv.includes('--smoke')?'qa/final-smoke-results.json':'qa/browser-results.json',JSON.stringify(results,null,2));console.log(JSON.stringify(results,null,2));
 }catch(error){
  const page=browser.contexts().flatMap(c=>c.pages()).at(-1);
  if(page){await page.screenshot({path:'qa/browser-failure.png',scale:'css'});console.error(await page.evaluate(()=>({url:location.href,y:scrollY,bodyStyle:document.body.getAttribute('style'),current:document.querySelector('.chapter.current')?.id,interiorTop:document.getElementById('interiors')?.getBoundingClientRect().top,diagnostics:document.querySelector('.webgl')?.__sceneDiagnostics})));}

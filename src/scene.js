@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
-import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
+import {createLuxuryLighting,refinePresentationMaterials} from './lighting';
 import {makeCameraPath,samplePath} from './story';
 import {createExplorer} from './explorer';
 
@@ -15,14 +15,9 @@ export async function createScene(host,{signal,onProgress,onReady,onFailure,onCo
  renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;
  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
  const element=renderer.domElement;element.tabIndex=-1;element.setAttribute('aria-label','3D project. In Explore, drag to rotate, pinch or wheel to zoom, and use arrow keys to pan.');host.appendChild(element);
- const scene=new THREE.Scene(),day=new THREE.Color('#d9ddd3');scene.background=day;scene.fog=new THREE.Fog(day,230,650);
+ const scene=new THREE.Scene();
  const camera=new THREE.PerspectiveCamera(40,1,.25,1200);
- const pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment(),environment=pmrem.fromScene(room,.04);
- scene.environment=environment.texture;scene.environmentIntensity=.35;room.dispose();pmrem.dispose();
- scene.add(new THREE.HemisphereLight('#fff4dc','#66765f',1.4));
- const sun=new THREE.DirectionalLight('#fff1d3',2.3);sun.position.set(180,160,-25);sun.target.position.set(85,0,-65);sun.castShadow=true;sun.shadow.mapSize.set(2048,2048);
- Object.assign(sun.shadow.camera,{left:-115,right:115,top:115,bottom:-115,near:1,far:450});sun.shadow.normalBias=.045;sun.shadow.bias=-.0002;scene.add(sun,sun.target);
- const fill=new THREE.DirectionalLight('#d9e6ff',1);fill.position.set(20,50,-140);scene.add(fill);
+ const lighting=createLuxuryLighting(renderer,scene);
  const modelURL='/assets/SHANGRILA_MASTER_REFINED.glb';
  const diagnostics={profile:mobile?'mobile':'desktop',quality:'original',modelURL,renders:0,pixelRatio:renderer.getPixelRatio(),antialias:true,shadows:2048,paused:false,mode:'guided'};host.__sceneDiagnostics=diagnostics;
  let dead=false,frame=0,last=0,visible=!document.hidden,paused=host.dataset.paused==='true',model,path,explorer,announced=false,progress=getProgress(),heroTime=0;
@@ -33,7 +28,7 @@ export async function createScene(host,{signal,onProgress,onReady,onFailure,onCo
  function resize(){const {width,height}=host.getBoundingClientRect();if(!width||!height)return;renderer.setSize(width,height);camera.aspect=width/height;camera.updateProjectionMatrix();invalidate();}
  const observer=new ResizeObserver(resize);observer.observe(host);resize();
  function disposeModel(){const gs=new Set(),ms=new Set();model?.traverse(o=>{if(o.isMesh){gs.add(o.geometry);for(const m of(Array.isArray(o.material)?o.material:[o.material]))ms.add(m);}});gs.forEach(g=>g.dispose());ms.forEach(m=>m.dispose());model=undefined;}
- function cleanup(){if(dead)return;dead=true;stop();observer.disconnect();document.removeEventListener('visibilitychange',visibility);signal.removeEventListener('abort',cleanup);element.removeEventListener('webglcontextlost',lost);explorer?.dispose();disposeModel();environment.dispose();sun.shadow.map?.dispose();renderer.dispose();element.remove();if(host.__sceneDiagnostics===diagnostics)delete host.__sceneDiagnostics;}
+ function cleanup(){if(dead)return;dead=true;stop();observer.disconnect();document.removeEventListener('visibilitychange',visibility);signal.removeEventListener('abort',cleanup);element.removeEventListener('webglcontextlost',lost);explorer?.dispose();disposeModel();lighting.dispose();renderer.dispose();element.remove();if(host.__sceneDiagnostics===diagnostics)delete host.__sceneDiagnostics;}
  function lost(e){e.preventDefault();onFailure('The image tour is ready to continue.');cleanup();}
  function visibility(){visible=!document.hidden;if(visible)invalidate();else stop();}
  element.addEventListener('webglcontextlost',lost);document.addEventListener('visibilitychange',visibility);signal.addEventListener('abort',cleanup,{once:true});
@@ -72,7 +67,7 @@ export async function createScene(host,{signal,onProgress,onReady,onFailure,onCo
   if(dead)return cleanup;
   model=(await loader.parseAsync(buffer,'/assets/')).scene;if(dead){disposeModel();return cleanup;}
   path=makeCameraPath(cameras);
-  model.traverse(o=>{if(!o.isMesh)return;o.castShadow=true;o.receiveShadow=true;for(const material of(Array.isArray(o.material)?o.material:[o.material]))if(/glaz|glass/i.test(material.name)){material.transparent=true;material.opacity=.21;material.depthWrite=false;material.side=THREE.DoubleSide;o.castShadow=false;}});
+  refinePresentationMaterials(model,scene.environment);
   scene.add(model);renderer.shadowMap.autoUpdate=false;renderer.shadowMap.needsUpdate=true;
   explorer=createExplorer(camera,element,{model,cameras,invalidate,reducedMotion,onState:state=>{diagnostics.mode=state;element.tabIndex=state==='guided'?-1:0;onExploreState(state);}});
   diagnostics.collisionBoxes=explorer.collisionBoxes.map(b=>({min:b.min.toArray(),max:b.max.toArray()}));

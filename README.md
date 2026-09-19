@@ -29,6 +29,8 @@ Explore stops the scroll camera and locks the page only while active. Focus is c
 
 Rendering occurs during camera motion or interaction, then stops entirely at rest. It pauses over interiors/master plan/closing and in hidden tabs. Shadow maps are computed once for the static scene. Animation is capped at 60 Hz. Model downloads are abortable; switching to images releases the renderer. WebGL failure/context loss returns to a visible image tour.
 
+**Lighting and colour:** warm side sunlight, a restrained cool fill and a softer ambient balance bring out the ivory facades and bronze finishes. An outdoor sky is baked once into the reflection map. Existing architectural light strips have a warmer glow, planting uses deeper greens, and the turquoise pool has subtle static ripple normals that catch the light as the camera moves. These are presentation material/lighting adjustments; the source architecture and model geometry are unchanged. The effect uses the same single cached shadow map on desktop and mobile, with no post-processing or continuous water animation.
+
 ## Asset paths and provenance
 
 | Asset | Runtime path | Source |
@@ -41,7 +43,7 @@ Rendering occurs during camera motion or interaction, then stops entirely at res
 | Interior images | `public/images/interior/*.webp` | Existing interior presentation exports and concepts |
 | P05 hotspot image | `public/images/hotspots/p05.webp` | `../03_BLENDER/review/12_P05_REVIEW.png` |
 
-The 24.8 MB model contains 2.12 million triangles and 150 material primitives. Geometry was spatially batched, conservatively simplified and meshopt-compressed. The broad context ground stays separate for road precision. Original object dimensions and site layout are retained. Blender procedural finishes use their original base colours/roughness; real-time shading differs from offline rendering. The evening poster is an existing presentation image and predates the latest facade pass.
+The 24.8 MB model contains 2.12 million triangles and 150 material primitives. Geometry was spatially batched, conservatively simplified and meshopt-compressed. The broad context ground stays separate for road precision. Original object dimensions and site layout are retained. Blender procedural finishes are exported as base colours/roughness, with runtime presentation adjustments in `src/lighting.js`; real-time shading differs from offline rendering. The evening poster is an existing presentation image and predates the latest facade pass.
 
 Interior storytelling contains eight groups and nine images: Main Living, Dining, Kitchen, Master Bedroom, Master Bathroom, Restaurant Interior, P05 Spa/Sauna and P06 Staff Accommodation. Living/Dining/Kitchen are native images from the original interior design PDF (`06_INTERIOR_PRESENTATION_IMAGES/03_FINAL_OUTPUT`). The remaining images are existing **provisional AI concept studies**, visibly captioned **CONCEPT STUDY · DESIGN UNDER REVIEW**. They are not claimed to be final approved designs or current-model renders. P06 uses the staff-room image, avoiding the known lounge layout discrepancy. No unfinished files from the concurrently developed photoreal render folder are used.
 
@@ -54,6 +56,7 @@ The master plan stays a direct image with zoom, mouse drag, native touch pan, ke
 ```text
 src/main.jsx                         Navigation, mode and scroll lifecycle
 src/scene.js                         Original-quality rendering/loading/cleanup
+src/lighting.js                      Warm sunlight, outdoor reflections and material grading
 src/explorer.js                      Orbit controls, bounds and camera transitions
 src/story.js                         Central exterior camera keyframes
 src/data/project.js                 Chapters and interior story configuration
@@ -87,8 +90,11 @@ npm run check:assets
 npm run build
 node scripts/browser-qa.mjs --production
 node scripts/browser-qa.mjs --production --smoke
+node scripts/browser-qa.mjs --production --lighting
 ```
 
 Asset checks verify GLB structure/compression, required source cameras, unchanged source Blender/PDF and source image hashes. Production browser checks cover desktop, touch tablet and a DPR-3 mobile viewport: guided navigation, rotate/zoom/pan including real touch events, seven hotspots, reset, camera clearance, smooth return, scroll release, rotation, idle rendering, eight interior groups, spa/sauna switching, master plan controls, reduced motion and asset-failure recovery. Results and screenshots are in `qa/`. Browser scripts use the bundled Playwright installation; set `PLAYWRIGHT_MODULE` to use another installation.
 
 These checks run in headless Edge on the local machine, not physical iOS/Android hardware. Rendering speed depends on the device GPU and network; no phone frame-rate guarantee is inferred from browser callbacks.
+
+The lighting check captures overview, Building A and pool views at desktop and mobile sizes, checks shader/browser errors, confirms original model quality and zero idle frames, and recreates the renderer after switching to images. Its results are in `qa/lighting-results.json`.

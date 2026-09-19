@@ -44,7 +44,7 @@ function App(){
   const timer=setTimeout(()=>import('./scene').then(({createScene})=>{
    if(abort.signal.aborted)return;
    return createScene(host.current,{signal:abort.signal,onController:value=>{engine.current=value;},onProgress:setLoad,onReady:()=>{clearTimeout(timeout);setReady(true);setMessage('');},onFailure:value=>{pendingExplore.current=false;pendingContinue.current=false;setPhase('guided');setMessage(value);setMode('stills');},onExploreState:setPhase,getProgress:()=>sceneProgress.current,getHero:()=>activeRef.current===0,reducedMotion:reduced,mobile:device.mobile,hotspotLayer:hotspotLayer.current});
-  }).then(fn=>{cleanup=fn;if(abort.signal.aborted)cleanup?.();}).catch(()=>{pendingExplore.current=false;setPhase('guided');setMode('stills');setMessage('Continue with the image tour.');}),200);
+  }).then(fn=>{cleanup=fn;if(abort.signal.aborted)cleanup?.();}).catch(error=>{console.error('Unable to initialize the 3D scene.',error);pendingExplore.current=false;setPhase('guided');setMode('stills');setMessage('Continue with the image tour.');}),200);
   return()=>{clearTimeout(timeout);clearTimeout(timer);abort.abort();cleanup?.();engine.current=null;};
  },[mode,reduced,device]);
  useEffect(()=>{if(ready&&pendingExplore.current){pendingExplore.current=false;exploringRef.current=true;engine.current?.enterExplore();}},[ready]);

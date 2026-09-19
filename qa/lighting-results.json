@@ -1,0 +1,39 @@
+[
+  {
+    "viewport": "desktop",
+    "originalQuality": true,
+    "pixelRatio": 1,
+    "antialias": true,
+    "shadowSize": 2048,
+    "triangles": 2154524,
+    "drawCalls": 158,
+    "views": [
+      "overview",
+      "building-a",
+      "pool"
+    ],
+    "zeroIdleFrames": true,
+    "rendererRecreated": true,
+    "errors": []
+  },
+  {
+    "viewport": "mobile",
+    "originalQuality": true,
+    "pixelRatio": 1.5,
+    "antialias": true,
+    "shadowSize": 2048,
+    "triangles": 2154524,
+    "drawCalls": 158,
+    "views": [
+      "overview",
+      "building-a",
+      "pool"
+    ],
+    "zeroIdleFrames": true,
+    "rendererRecreated": true,
+    "errors": []
+  },
+  {
+    "build": "production dist"
+  }
+]
